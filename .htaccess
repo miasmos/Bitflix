@@ -1,0 +1,7 @@
+Options +FollowSymLinks
+RewriteEngine on
+RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php [L]
+
+ErrorDocument 403 /forbidden.html
+ErrorDocument 404 /notfound.html
+ErrorDocument 500 /servererror.html

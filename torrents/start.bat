@@ -1,0 +1,1 @@
+aria2c.exe --enable-rpc --enable-dht --bt-save-metadata --bt-metadata-only --rpc-allow-origin-all --max-concurrent-downloads=20 --bt-stop-timeout=600 --max-overall-download-limit=500K -c -D
