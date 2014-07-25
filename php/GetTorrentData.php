@@ -108,8 +108,8 @@ function GetTorrentData($result,$interval,$delete=1) {
 							if ($torrents["Score"] > 0) {
 								//$db->query("DELETE FROM `torrent` WHERE movieid = '".$movie->id."' AND date(lastupdate) < DATE_SUB(NOW(), INTERVAL 8 DAY)");
 								$db->query("INSERT INTO `torrent` (movieid,title,link,magnet,magnetend,uploaddate,size,seeds,leeches,score,rank,ratio,quality,lastupdate) VALUES
-									('".$torrents["ID"]."','".mysql_real_escape_string($torrents["Title"])."','".mysql_real_escape_string($torrents["Link"])."','".$torrents["MagnetLink"]."','".$torrents["MagnetLinkEnd"]."','".$torrents["DateUploaded"]."','".$torrents["Size"]."','".$torrents["Seeds"]."','".$torrents["Leeches"]."','".$torrents["Score"]."','".$rank."','".$torrents["SeedRatio"]."','".$index1."',Now())
-										ON DUPLICATE KEY UPDATE title='".mysql_real_escape_string($torrents["Title"])."',seeds='".$torrents["Seeds"]."',leeches='".$torrents["Leeches"]."',ratio='".$torrents["SeedRatio"]."',score='".$torrents["Score"]."',rank='".$rank."',lastupdate=Now()");
+									('".$torrents["ID"]."','".mysqli_real_escape_string($db,$torrents["Title"])."','".mysqli_real_escape_string($db,$torrents["Link"])."','".$torrents["MagnetLink"]."','".$torrents["MagnetLinkEnd"]."','".$torrents["DateUploaded"]."','".$torrents["Size"]."','".$torrents["Seeds"]."','".$torrents["Leeches"]."','".$torrents["Score"]."','".$rank."','".$torrents["SeedRatio"]."','".$index1."',Now())
+										ON DUPLICATE KEY UPDATE title='".mysqli_real_escape_string($db,$torrents["Title"])."',seeds='".$torrents["Seeds"]."',leeches='".$torrents["Leeches"]."',ratio='".$torrents["SeedRatio"]."',score='".$torrents["Score"]."',rank='".$rank."',lastupdate=Now()");
 								fetchTorrent($torrents["MagnetLink"],$torrents["MagnetLinkEnd"]);		//get the torrent file to detect contents
 								$rank++;
 							}
@@ -724,7 +724,7 @@ function numeralToInt($in) {
 
 function elog($string) {
 	//echo ($string."<br/>");
-	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'\logs\GetTorrentData.log');
+	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'/logs/GetTorrentData.log');
 }
 
 ?>

@@ -4,8 +4,9 @@
 include 'includes/bencoded.php';
 include 'includes/dbConnect.php';
 
-while (true) {
+//while (true) {
 	$torrent = checkDir();
+
 	if ($torrent) {
 		$check = checkContents($torrent);
 		//echo $check[0].":".$check[1];
@@ -24,8 +25,8 @@ while (true) {
 		}
 		$db->close();
 	}
-	else {sleep(10);}
-}
+	//else {sleep(10);}
+//}
 
 function checkSize($string,$size) {return round($string/100000) < $size;}
 function getExt($string) {return substr($string,strrpos($string, ".")+1);}
@@ -139,20 +140,19 @@ function checkDir() {
 
 	if (count($dir) < 3) {return false;}
 	foreach($dir as $index=>$value) {
-		if (is_dir($value) || pathinfo($value, PATHINFO_EXTENSION) != "torrent") {continue;}	//skip folders and files without torrent extension
-		if ($index == 2) {$do = $path."/".$dir[$index];}
-		
-		if ($index > 2) {
-			$temp = $path."/".$dir[$index];
-			if (filemtime($temp) < filemtime($do)) {$do = $temp;}
-		}
+		if (!is_dir($value) && pathinfo($value, PATHINFO_EXTENSION) == "torrent") {	//skip folders and files without torrent extension
+			if ($do == false) {$do = $path."/".$dir[$index];}
+			else {
+				if (filemtime($path."/".$dir[$index]) < filemtime($do)) {$do = $path."/".$dir[$index];}
+			}
+		}	
 	}
 	return $do;
 }
 
 function elog($string) {
 	//echo ($string."<br/>");
-	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'\logs\confirmTorrentContents.log');
+	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'/logs/confirmTorrentContents.log');
 }
 ?>
 

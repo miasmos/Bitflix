@@ -32,15 +32,19 @@ $imgurl = $imgurl['value'];
 //in theatres
 //SELECT * FROM `movie` INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing'
 //list based stuff
-printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing");
+//printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing");
+//printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='upcoming' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Upcoming");
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='top_rated' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Top Rated");
+
 //made by {insert production company here}
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE movie.year = '2007' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","2007");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Animation' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Drama' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Comedy' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Thriller' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30");
 $db->close();
 
-function printCategory($query,$title) {
+function printCategory($query,$title="") {
 	global $db,$imgurl;
 	echo "<div class='category'><div class='movie-wrapper'>";
 	$select = $db->query($query);
@@ -50,6 +54,7 @@ function printCategory($query,$title) {
 	}
 	while($row = mysqli_fetch_object($select)) {
 		$rating=strval(104*(floatval($row->vote_average)/10));
+		if ($row->overview == null || $row->overview == "") {$row->overview = "An overview is not available.";}
 		echo "<div class='movie'>
 			<div class='poster'>
 				<img src='{$imgurl}w154/{$row->poster_image}' />
@@ -71,7 +76,8 @@ function printCategory($query,$title) {
 					</div>
 					<ul class='info-menu'>
 						<li class='info-menu-icon'>
-							<a href='magnet:?xt=urn:btih:{$row->magnet}{$row->magnetend}'>w</a>
+							<!--<a href='magnet:?xt=urn:btih:{$row->magnet}{$row->magnetend}'>w</a>-->
+							<a href='magnet:howdotheywork?'>w</a>
 						</li>";
 				  if (!empty($row->trailer) && $row->trailer != null) {echo "<li class='info-menu-icon'>
 							<a class='trailer-link' href='' data-href='{$row->trailer}'>5</a>

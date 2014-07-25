@@ -51,16 +51,16 @@ function addMovie($movie,$id) {
 
 		//insert basic movie data
 		$db->query("INSERT INTO `movie` (`id`,`title`,`vote_average`,`vote_count`,`overview`,`runtime`,`release_date`,`year`,`poster_image`,`backdrop_image`,`imdb`,`budget`,`revenue`,`trailer`,`popularity`,`lastupdate`) VALUES
-		('".$id."','".mysql_real_escape_string($movie->title)."','".$movie->vote_average."','".$movie->vote_count."','".mysql_real_escape_string($movie->overview)."','".$movie->runtime."','".$movie->release_date."','".$year."','".
+		('".$id."','".mysqli_real_escape_string($db,$movie->title)."','".$movie->vote_average."','".$movie->vote_count."','".mysqli_real_escape_string($db,$movie->overview)."','".$movie->runtime."','".$movie->release_date."','".$year."','".
 		$movie->poster_path."','".$movie->backdrop_path."','".$movie->imdb_id."','".$movie->budget."','".$movie->revenue."','".$trailer[0]->source."','".$movie->popularity."',Now()) ".
-			"ON DUPLICATE KEY UPDATE title='".mysql_real_escape_string($movie->title)."',vote_average='".$movie->vote_average."',vote_count='".$movie->vote_count."',overview='".mysql_real_escape_string($movie->overview)."',runtime='".
+			"ON DUPLICATE KEY UPDATE title='".mysqli_real_escape_string($db,$movie->title)."',vote_average='".$movie->vote_average."',vote_count='".$movie->vote_count."',overview='".mysqli_real_escape_string($db,$movie->overview)."',runtime='".
 			$movie->runtime."',release_date='".$movie->release_date."',year='".$year."',poster_image='".$movie->poster_path."',backdrop_image='".$movie->backdrop_path."',imdb='".$movie->imdb_id."',budget='".$movie->budget."',revenue='".
 			$movie->revenue."',trailer='".$trailer."',popularity='".$movie->popularity."',lastupdate=Now()");
 		if ($db->error) {elog($id.' movie insert:'.$db->error."");}
 		
 		//insert genre data
 		foreach($movie->genres as $in=>$genre) {
-			$db->query("INSERT IGNORE INTO `genre` (`id`,`genre`) VALUES ('".$genre->id."','".mysql_real_escape_string($genre->name)."')");
+			$db->query("INSERT IGNORE INTO `genre` (`id`,`genre`) VALUES ('".$genre->id."','".mysqli_real_escape_string($db,$genre->name)."')");
 			if ($db->error) {elog($id.' genre insert:'.$db->error."");}
 			$db->query("INSERT IGNORE INTO `movie_genre` (`movieid`,`genreid`) VALUES ('".$id."','".$genre->id."')");
 			if ($db->error) {elog($id.' movie_genre insert:'.$db->error."");}
@@ -68,16 +68,16 @@ function addMovie($movie,$id) {
 		
 		//insert cast data
 		foreach($movie->casts->cast as $in=>$person) {
-			$db->query("INSERT INTO `actor` (`id`,`name`,`picture`) VALUES ('".$person->id."','".mysql_real_escape_string($person->name)."','".$person->profile_path."') ".
-				"ON DUPLICATE KEY UPDATE name='".mysql_real_escape_string($person->name)."',picture='".$person->profile_path."'");
+			$db->query("INSERT INTO `actor` (`id`,`name`,`picture`) VALUES ('".$person->id."','".mysqli_real_escape_string($db,$person->name)."','".$person->profile_path."') ".
+				"ON DUPLICATE KEY UPDATE name='".mysqli_real_escape_string($db,$person->name)."',picture='".$person->profile_path."'");
 			if ($db->error) {elog($id.' actor insert:'.$db->error."");}
-			$db->query("INSERT IGNORE INTO `movie_actor` (`movieid`,`actorid`,`character`) VALUES ('".$id."','".$person->id."','".mysql_real_escape_string($person->character)."')");
+			$db->query("INSERT IGNORE INTO `movie_actor` (`movieid`,`actorid`,`character`) VALUES ('".$id."','".$person->id."','".mysqli_real_escape_string($db,$person->character)."')");
 			if ($db->error) {elog($id.' movie_actor insert:'.$db->error."");}
 		}
 		
 		//insert keyword data
 		foreach($movie->keywords->keywords as $in=>$keyword) {
-			$db->query("INSERT IGNORE INTO `keyword` (`id`,`keyword`) VALUES ('".$keyword->id."','".mysql_real_escape_string($keyword->name)."')");
+			$db->query("INSERT IGNORE INTO `keyword` (`id`,`keyword`) VALUES ('".$keyword->id."','".mysqli_real_escape_string($db,$keyword->name)."')");
 			if ($db->error) {elog($id.' keyword insert:'.$db->error."");}
 			$db->query("INSERT IGNORE INTO `movie_keyword` (`movieid`,`keywordid`) VALUES ('".$id."','".$keyword->id."')");
 			if ($db->error) {elog($id.' movie_keyword insert:'.$db->error."");}
@@ -93,7 +93,7 @@ function addMovie($movie,$id) {
 		
 		//insert production company data
 		foreach($movie->production_companies as $in=>$company) {
-			$db->query("INSERT IGNORE INTO `company` (`id`,`company`) VALUES ('".$company->id."','".mysql_real_escape_string($company->name)."')");
+			$db->query("INSERT IGNORE INTO `company` (`id`,`company`) VALUES ('".$company->id."','".mysqli_real_escape_string($db,$company->name)."')");
 			if ($db->error) {elog($id.' company insert:'.$db->error."");}
 			$db->query("INSERT IGNORE INTO `movie_company` (`movieid`,`companyid`) VALUES ('".$id."','".$company->id."')");
 			if ($db->error) {elog($id.' movie_company insert:'.$db->error."");}
@@ -101,9 +101,9 @@ function addMovie($movie,$id) {
 		
 		//insert language data
 		foreach($movie->spoken_languages as $in=>$lan) {
-			$db->query("INSERT IGNORE INTO `language` (`language`) VALUES ('".mysql_real_escape_string($lan->name)."')");
+			$db->query("INSERT IGNORE INTO `language` (`language`) VALUES ('".mysqli_real_escape_string($db,$lan->name)."')");
 			if ($db->error) {elog($id.' language insert:'.$db->error."");}
-			$db->query("INSERT IGNORE INTO `movie_language` (`movieid`,`languageid`) VALUES ('".$id."','".mysql_real_escape_string($lan->name)."')");
+			$db->query("INSERT IGNORE INTO `movie_language` (`movieid`,`languageid`) VALUES ('".$id."','".mysqli_real_escape_string($db,$lan->name)."')");
 			if ($db->error) {elog($id.' movie_language insert:'.$db->error."");}
 		}
 	}
@@ -136,7 +136,7 @@ function addMovie($movie,$id) {
 
 function elog($string) {
 	//echo ($string."<br/>");
-	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'\logs\GetMovieData.log');
+	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'/logs/GetMovieData.log');
 }
 ?>
 
