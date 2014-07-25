@@ -87,17 +87,19 @@ function GetTorrentData($result,$interval,$delete=1) {
 	$errors=0;
 	foreach ($movies as $index=>$movie) {	//fetch torrents, choose best one for each movie, and append to display list
 		if ($mname[$index] != "skipthisone") {
-			elog("looking for ".$mname[$index]."<br/>");
-			$displayList[$index] = findBestTorrent($movie, $mname, $index, 0);
+			elog("looking for ".$mname[$index]);
+			if (trim($mname[$index]) != "") {
+				$displayList[$index] = findBestTorrent($movie, $mname, $index, 0);
+			}
 			
 			if ($displayList[$index] == -1) {	//if connection failed
 				elog("Connection failed when searching for {$mname[$index]}");
 				$errors++;
 				if ($errors > 4) {elog("Operation aborted due to server being unresponsive"); return 0;}
 			}
-			else {
+			else if ($displayList[$index] != -1 || trim($mname[$index]) == "") {
 				$errors=0;
-				if (empty($displayList[$index]['1080']) && empty($displayList[$index]['720']) && empty($displayList[$index]['dvdrip']) && empty($displayList[$index]['cam'])) {	//no torrents found
+				if ((empty($displayList[$index]['1080']) && empty($displayList[$index]['720']) && empty($displayList[$index]['dvdrip']) && empty($displayList[$index]['cam'])) || trim($mname[$index]) == "") {	//no torrents found / bad movie name
 					$db->query("DELETE FROM `torrent` WHERE movieid = ".$movie->id);
 					$db->query("INSERT INTO `torrent` (movieid,lastupdate,magnet,confirmed) VALUES ('{$movie->id}',Now(),'0','2')");
 				}
@@ -158,7 +160,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 	$movieTitle=normalize($movie->title);
 	
 	foreach ($qualities as $ind=>$quality) {
-		if (strlen($_quality) == 0) {elog("<div><br/><br/><br/>looking for ".$quality." using year search<br/>");}
+		if (strlen($_quality) == 0) {elog("looking for ".$quality." using year search");}
 		else {elog("<br/>looking for ".$quality." using non-year search<br/>");}
 		
 		if ($quality == "1080" || $quality == "720") {$torResult = $torResultHD;}
@@ -173,7 +175,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				$titleCheck = strtolower(str_replace($movieTitle, "", $tname[$index]));
 				$tname[$index]=normalize($curTor["Title"]);
 				if (containsOneOf($blackList, $titleCheck)) {
-					elog($titleCheck." contains blacklisted word, skipping<br/>");
+					elog($titleCheck." contains blacklisted word, skipping");
 					unset($torResult[$index]);
 				}
 				elseif (trim($curTor["Title"]) == "") {unset($curTor);}
@@ -191,8 +193,8 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				
 				$qualityCheck=false;
 				if (stripos($titleCheck, $quality)) {$qualityCheck=true; $curTor["Score"]+=20;}
-				elseif (!stripos($titleCheck, $quality) && $hiScore >= 20 && $quality != "cam") {elog($tname[$index]." quality is ensured elsewhere and not here, skipping<br/>"); $curTor["Score"]=0; continue;}	//if quality is ensured in other torrents, then skip those we're unsure of
-				elseif (!stripos($titleCheck, $quality) && $hiScore < 20 && ($quality == "1080" || $quality == "720")) {elog($tname[$index]." is hd and does not contain correct quality, skipping<br/>"); $curTor["Score"]=0; continue;}
+				elseif (!stripos($titleCheck, $quality) && $hiScore >= 20 && $quality != "cam") {elog($tname[$index]." quality is ensured elsewhere and not here, skipping"); $curTor["Score"]=0; continue;}	//if quality is ensured in other torrents, then skip those we're unsure of
+				elseif (!stripos($titleCheck, $quality) && $hiScore < 20 && ($quality == "1080" || $quality == "720")) {elog($tname[$index]." is hd and does not contain correct quality, skipping"); $curTor["Score"]=0; continue;}
 				
 				$con=0;
 				foreach ($qualities as $t=>$qua) {
@@ -206,7 +208,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				if ($con) {$curTor["Score"]=0; continue;}
 				
 				$match = explode(' ', $titleCheck);
-				if ((trim($match[0]) > 1 && trim($match[0]) < 6) || isNumeral(trim($match[0]))) {elog($tname[$index]." is a sequel, skipping<br/>"); $curTor["Score"]=0; continue;}	//check if it's a sequel
+				if ((trim($match[0]) > 1 && trim($match[0]) < 6) || isNumeral(trim($match[0]))) {elog($tname[$index]." is a sequel, skipping"); $curTor["Score"]=0; continue;}	//check if it's a sequel
 				if ($curTor["Seeds"] <= $seedThreshold && $curTor["SeedRatio"] > $minSeedRatio) {$curTor["Score"]-=4;} //if there's a low amount of seeds and the ratio is high, penalize score
 				if ($quality == "dvdrip" && getSizeMB($curTor["Size"] > $maxSDSize)) {elog($tname[$index]." is dvdrip quality and is more than ".$maxSDSize."MB."); $curTor["Score"] = 0; continue;}	//if quality is 480, restrict size to < maxSDSize
 				
@@ -220,7 +222,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				}
 				if ($con) {$curTor["Score"]=0; continue;}
 				preg_match_all('@(19[8,9][0-9]|2[0,1][0-9][0-9])@', $tname[$index], $match);	//check for 1800 < year < 2100
-				if (count($match[0]) == 0 && strlen($_quality) > 0) {elog($tname[$index]." doesn't contain a year, skipping<br/>"); $curTor["Score"]=0; continue;}	//if year included in search and year wasn't found ignore torrent
+				if (count($match[0]) == 0 && strlen($_quality) > 0) {elog($tname[$index]." doesn't contain a year, skipping"); $curTor["Score"]=0; continue;}	//if year included in search and year wasn't found ignore torrent
 				elseif (count($match[0]) > 0 && strlen($_quality) == 0) {$curTor["Score"]+=2;}	//if year wasn't included in search and year was found, add to score
 				
 				if ($quality == "1080" || $quality == "720") {
@@ -277,7 +279,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 					}
 				}
 				
-				if ($qualityCheck == false) {elog($tname[$index]." failed quality check, skipping<br/>"); $curTor["Score"]=0; continue;}
+				if ($qualityCheck == false) {elog($tname[$index]." failed quality check, skipping"); $curTor["Score"]=0; continue;}
 				
 				if ($curTor["Seeds"]>$hiSeed) {$hiSeedCount+=1;}	//track number of torrents having a trivial number of seeds
 				if ($curTor["SeedRatio"] > 0) {$curTor["Score"] += .01/$curTor["SeedRatio"];}
@@ -285,7 +287,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				//$curTor["Quality"]=$quality;
 				$curTor["Score"]=round($curTor["Score"],3);
 				$curTor["Size"]=getSizeGB($curTor["Size"]);
-				elog($tname[$index]." passed filters with a score of ".$curTor["Score"]."<br/>");
+				elog($tname[$index]." passed filters with a score of ".$curTor["Score"]);
 				if ($curTor["Score"] > $hiScore) {$hiScore = $curTor["Score"];}
 			}
 			
@@ -336,7 +338,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 					}
 				}
 				
-				elog("calculated stddev to be ".standard_deviation($tempSeeds)."<br/>");
+				elog("calculated stddev to be ".standard_deviation($tempSeeds));
 				if (standard_deviation($tempSeeds) < $hiSeed*0.8) {	//if there's a large deficit in seeds among torrents with trivial seed counts, prefer more seeds to larger file
 					elog("sorting by size<br/>");
 					array_multisort($tempKeys, SORT_DESC, $tempSize);	//sort the tempSize array by size
@@ -419,15 +421,15 @@ function newTPBSearch($q, $year, $category, $returns) {
 
 	if (strlen($year) == 0 && strlen($q) == 0) {
 		$return=curl_get('http://thepiratebay.se/browse/' . $category . '/0/' . $orderby);
-		elog('http://thepiratebay.sx/browse/' . $category . '/0/' . $orderby. "<br/>");
+		elog('http://thepiratebay.sx/browse/' . $category . '/0/' . $orderby);
 	}
 	elseif (strlen($year) == 0 && strlen($q) > 0) {
 		$return=curl_get('http://thepiratebay.se/search/' . $q . '/0/' . $orderby . '/' . $category);
-		elog('http://thepiratebay.sx/search/' . $q . '/0/' . $orderby . '/' . $category."<br/>");
+		elog('http://thepiratebay.sx/search/' . $q . '/0/' . $orderby . '/' . $category);
 	}
 	else {
 		$return=curl_get('http://thepiratebay.se/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category);
-		elog('http://thepiratebay.sx/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category."<br/>");
+		elog('http://thepiratebay.sx/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category);
 	}
 	
 	//extract the important data from the html
