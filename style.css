@@ -96,8 +96,9 @@ body{
 	z-index:20;
 	bottom:-6px;
 	left:-15px;
-	opacity:0.6;
+	opacity:0.7;
 	cursor:default;
+	pointer-events:none;
 }
 
 .movie-wrapper {overflow:hidden; width:20000px; left:0px; position:relative;}
@@ -129,7 +130,7 @@ body{
 .info-menu {font-family:entypo; float:left; left:0px; bottom:5px; font-size:2em; position:absolute;}
 .info-menu-icon {padding-right:4px; cursor:pointer; display:inline-block;}
 .poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:6; left:0;}
-.poster>img {opacity:0.75; height:100%; position:absolute; left:0; z-index:4}
+.poster>img {opacity:0.70; height:100%; position:absolute; left:0; z-index:4}
 .poster-backer {background-color:#FFF; height:100%; width:100%; position:absolute; top:0; z-index:2}
 .trailer {width:400px; height:100%; z-index:9; background-color:#000; position:absolute; left:154px;}
 

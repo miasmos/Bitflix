@@ -4,7 +4,7 @@
 include 'includes/bencoded.php';
 include 'includes/dbConnect.php';
 
-//while (true) {
+while (true) {
 	$torrent = checkDir();
 
 	if ($torrent) {
@@ -25,8 +25,8 @@ include 'includes/dbConnect.php';
 		}
 		$db->close();
 	}
-	//else {sleep(10);}
-//}
+	else {sleep(10);}
+}
 
 function checkSize($string,$size) {return round($string/100000) < $size;}
 function getExt($string) {return substr($string,strrpos($string, ".")+1);}

@@ -6,6 +6,7 @@ include 'includes/curl.php';
 $db = dbConnect();
 $querycount=0;
 $starttime = microtime(true);
+$i=0;;
 
 $last = $db->query("SELECT * FROM settings WHERE name='lastMovie' LIMIT 1");	//fetch last movie searched
 $last = mysqli_fetch_array($last);
@@ -13,7 +14,14 @@ $last = intval($last['value']);
 if ($last === null) {$last = 0;}
 
 $ids = $db->query("SELECT id FROM movie");
-$errors=0;
+
+
+function updateLastMovie() {
+	global $i;
+	$db->query("INSERT INTO `settings` (`name`,`value`) VALUES ('lastMovie','".$i."') ON DUPLICATE KEY UPDATE value='".$i."'");	//maximum of 30 requests per 10 seconds
+}
+register_shutdown_function('updateLastMovie');
+
 while ($row = mysqli_fetch_array($ids)) {
 	if ($row['id'] >= $last) {
 		$i = $row['id'];
@@ -23,17 +31,13 @@ while ($row = mysqli_fetch_array($ids)) {
 		if ($movie !== null) {
 			$querycount+=1;
 			elog("updating:".$i);
-			$errors=0; 
 			addMovie($movie,$i);
 			
 			$endtime = microtime(true);
 			$time=$endtime-$starttime;
 			if ($time >= 10) {$starttime = microtime(true); $querycount=0;}
-			elseif ($querycount >= 30 && $time < 10 && $time > 0) {$time=11-$time; elog('sleeping for '.$time.' seconds'); $querycount=0; sleep($time); $starttime = microtime(true);
-			$db->query("INSERT INTO `settings` (`name`,`value`) VALUES ('lastMovie','".$i."') ON DUPLICATE KEY UPDATE value='".$i."'");}	//maximum of 30 requests per 10 seconds
+			elseif ($querycount >= 30 && $time < 10 && $time > 0) {$time=11-$time; elog('sleeping for '.$time.' seconds'); $querycount=0; sleep($time); $starttime = microtime(true);}
 		}
-		else {$errors++;}
-		if ($errors > 4) {elog("Operation aborted due to server being unresponsive"); exit;}
 	}
 }
 $db->query("DELETE FROM `settings` WHERE name='lastMovie'");

@@ -24,16 +24,11 @@ $select = $db->query("SELECT value FROM `settings` WHERE name='baseURL'");
 $imgurl = mysqli_fetch_array($select);
 $imgurl = $imgurl['value'];
 //released on this day
-//SELECT * FROM `movie` WHERE MONTH(release_date) = MONTH(NOW()) AND DAY(release_date) = DAY(NOW()) ORDER BY RAND()
+//SELECT * FROM `movie` WHERE MONTH(release_date) = MONTH(NOW()) AND DAY(release_date) = DAY(NOW());
 
-//genres
-//SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Animation' AND torrent.confirmed=1
-
-//in theatres
-//SELECT * FROM `movie` INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing'
 //list based stuff
-//printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing");
-//printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='upcoming' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Upcoming");
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing");
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='popular_actors' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Popular Actors");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='top_rated' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Top Rated");
 
 //made by {insert production company here}
@@ -76,8 +71,8 @@ function printCategory($query,$title="") {
 					</div>
 					<ul class='info-menu'>
 						<li class='info-menu-icon'>
-							<!--<a href='magnet:?xt=urn:btih:{$row->magnet}{$row->magnetend}'>w</a>-->
-							<a href='magnet:howdotheywork?'>w</a>
+							<a href='magnet:?xt=urn:btih:{$row->magnet}{$row->magnetend}'>w</a>
+							<!--<a href='magnet:howdotheywork?'>w</a>-->
 						</li>";
 				  if (!empty($row->trailer) && $row->trailer != null) {echo "<li class='info-menu-icon'>
 							<a class='trailer-link' href='' data-href='{$row->trailer}'>5</a>

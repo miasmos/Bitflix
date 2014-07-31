@@ -13,39 +13,51 @@ $(document).ready(function() {
 	
 	*/
 	var posterNum=$(window).width()/$('.poster').width();
+	var posterWidth=$('.poster').width();
 	var animQue=0;
+	var appendPosterNum=3;
 
 	$(window).resize(function() {
 		posterNum=$(window).width()/$('.poster').width();	//get number of poster that fit across the screen
+		posterWidth=$('.poster').width();
 	});
-	
+
 	setInterval(function() {
-		if ($(animQue).children('.trailer').length == 0) {$(animQue).stop(true).animate({width:"154"},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
+		if ($(animQue).children('.trailer').length == 0) {$(animQue).stop(true).animate({width:posterWidth},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
 		
 		//check for row wrap
 		$('.movie-wrapper').each(function(index) {
 			if ($(this).children().length >= posterNum) {
 				if ($(this).is(':animated')) {
-					lastPos = $(this).find('.movie:nth-child('+Math.round(posterNum+1)+')').position();
-					firstPos = $(this).find('.movie:nth-child(1)').position();
+					lastPos = $(this).find('.movie:nth-last-child('+appendPosterNum+')').offset();
+					firstPos = $(this).find('.movie:nth-child('+appendPosterNum+')').offset();
 					
-					console.log('firstPos:'+firstPos.left+',lastPos:'+lastPos.left);
-					if (lastPos.left-$('.poster').width() < ($('.poster').width()*posterNum)) {
-						$(this).find('.movie:nth-last-child(1)').prependTo(this);
-						//$(this).find('.movie:nth-last-child(1)').remove();
-						//$(this).animate({left:'+=154'},0);
+					if (lastPos.left+posterWidth < $(window).width()) {
+						$('#scrolling').animate({left:'+='+(posterWidth)},0,function(){
+							$(this).find('.movie:nth-child(1)').appendTo(this);
+						});
 					}
 					if (firstPos.left > 0) {
-						$(this).find('.movie:nth-child(1)').appendTo(this);
-						//$(this).find('.movie:nth-child(1)').remove();
-						//$(this).animate({left:'-=154'},0);
-						
+						$('#scrolling').animate({left:'-='+(posterWidth)},0,function(){
+							$(this).find('.movie:nth-last-child(1)').prependTo(this);
+						});
 					}
 				}
 			}
 		});
 	},100);
 	
+	//remember original accordian direction
+	$('.movie-wrapper').on("mouseleave", function(event) {
+		if ($('#accordian-right').length) {
+			$(this).animate({left:-$('.info').width()},{queue:false});
+		}
+		$('#accordian-left').attr('id','');
+		$('#accordian-right').attr('id','');
+	}).bind("mouseenter", function(event) {
+		
+	});
+
 	//adjust opacity of category titles,poster images on hover
 	$('.movie,.category-title').on("mouseenter", function(event) {
 		$(this).closest('.category-title').stop(true).fadeOut(400);
@@ -53,12 +65,12 @@ $(document).ready(function() {
 	});
 	$('.movie,.category-title').on("mouseleave", function(event) {
 		$(this).closest('.category-title').stop(true).fadeTo(400,0.85);
-		if ($(this).children('.trailer').length == 0) {$(this).find('.poster img').stop(true).animate({opacity:0.75},100);}
+		if ($(this).children('.trailer').length == 0) {$(this).find('.poster img').stop(true).animate({opacity:0.70},100);}
 	});
 	
 	//animate category title opacity on hover
 	$('.movie,.category-title').on("mouseenter", function(event) {$(this).parent().parent().find('.category-title').stop(true).animate({opacity:0.15},400);});
-	$('.movie,.category-title').on("mouseleave", function(event) {$(this).parent().parent().find('.category-title').stop(true).animate({opacity:0.6},400);});
+	$('.movie,.category-title').on("mouseleave", function(event) {$(this).parent().parent().find('.category-title').stop(true).animate({opacity:0.7},400);});
 	
 	//animate info reveals on cover hover
 	$('.movie').on("mouseenter", function(event) {
@@ -68,13 +80,21 @@ $(document).ready(function() {
 			$(this).stop(true).animate({width:"554px"},200);
 			$(this).find('.poster').animate({left:"400px"},200);
 			$(this).addClass('accordian-left');
-			if ($(this).prev().width() == 154) {$(this).parent().stop(true).animate({left:"-=400px"},200);}
+			if ($(this).prev().width() == posterWidth) {$(this).parent().stop(true).animate({left:"-=400px"},200);}
 			else {$(this).parent().stop(true);}
+
+			if (!$('#accordian-left').length && !$('#accordian-right').length) {
+				$(this).attr('id','accordian-left');
+			}
 		}
 		else {
 			if ($(this).parent().hasClass('closing')) {$(this).parent().stop(true); $(this).parent().removeClass('closing');}
 			$(this).addClass('accordian-right');
 			$(this).stop(true).animate({width:"554px"}, 200);
+
+			if (!$('#accordian-left').length && !$('#accordian-right').length) {
+				$(this).attr('id','accordian-right');
+			}
 		}
 	}).bind("mouseleave",function() {
 		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
@@ -86,8 +106,8 @@ $(document).ready(function() {
 			else {	//if it has opened to the right
 				$(this).removeClass('accordian-right');
 			}
-			$(this).stop(true).animate({width:"154"},200,function(){
-				$(this).find('.info').animate({left:'156px'},0);
+			$(this).stop(true).animate({width:posterWidth},200,function(){
+				$(this).find('.info').animate({left:posterWidth},0);
 			});
 		}
 		else {	//if a trailer is playing, que it
@@ -113,7 +133,7 @@ $(document).ready(function() {
 			var newTrailer=$(this);
 			$(this).closest('.movie').append("<div class='trailer hidden'></div>");
 			$('.trailer').not('.hidden').parent().find('.poster img').stop(true).animate({opacity:0.7},100);
-			$('.trailer').not('.hidden').closest('.movie').stop(true).animate({width:"154"},200,function(){
+			$('.trailer').not('.hidden').closest('.movie').stop(true).animate({width:posterWidth},200,function(){
 				$('.trailer').not('.hidden').remove();
 				$('.trailer').youTubeEmbed({
 					video:'http://www.youtube.com/watch?v='+$(newTrailer).attr('data-href'),
