@@ -27,7 +27,7 @@ $imgurl = $imgurl['value'];
 //SELECT * FROM `movie` WHERE MONTH(release_date) = MONTH(NOW()) AND DAY(release_date) = DAY(NOW());
 
 //list based stuff
-printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing");
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Now Playing",1);
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='popular_actors' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Popular Actors");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='top_rated' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30","Top Rated");
 
@@ -39,9 +39,13 @@ printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=mov
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = 'Thriller' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY torrent.movieid LIMIT 30");
 $db->close();
 
-function printCategory($query,$title="") {
+function printCategory($query,$title="",$featured=0) {
 	global $db,$imgurl;
-	echo "<div class='category'><div class='movie-wrapper'>";
+	if (!$featured) {
+		echo "<div class='category'><div class='movie-wrapper'>";
+	} else {
+		echo "<div class='category'><div class='featured-movie-wrapper'>";
+	}
 	$select = $db->query($query);
 	if (empty($title)) {
 		$row=mysqli_fetch_object($select);
@@ -50,10 +54,17 @@ function printCategory($query,$title="") {
 	while($row = mysqli_fetch_object($select)) {
 		$rating=strval(104*(floatval($row->vote_average)/10));
 		if ($row->overview == null || $row->overview == "") {$row->overview = "An overview is not available.";}
-		echo "<div class='movie'>
-			<div class='poster'>
-				<img src='{$imgurl}w154/{$row->poster_image}' />
-				<div class='poster-backer'></div>
+		if (!$featured) {
+			echo "<div class='movie'>
+			<div class='poster'>";
+			echo "<img src='{$imgurl}w154/{$row->poster_image}' />";
+		}
+		else {
+			echo "<div class='featured-movie'>
+			<div class='featured-poster'>";
+			echo "<img src='{$imgurl}w300/{$row->backdrop_image}' />";
+		}
+		echo "<div class='poster-backer'></div>
 			</div>
 			<div class='info'>
 				<div class='info-overview'>{$row->overview}</div>

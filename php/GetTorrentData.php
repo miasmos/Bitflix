@@ -35,7 +35,7 @@ function UpdateTorrents() {
 	
 	if (CheckTimeElapsed("lastTorrentListUpdate",2)) {
 		//now_playing and new dvd releases (within the week) update every 2 hours
-		$result = $db->query("SELECT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity > 1 AND (EXISTS (SELECT 1 FROM `list` WHERE list.listname='now_playing' AND list.value=movie.id) OR date(movie.release_date) >= NOW() - INTERVAL 7 DAY) AND (date(torrent.lastupdate) < NOW() - INTERVAL 2 HOUR)");
+		$result = $db->query("SELECT DISTINCT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity > 1 AND (EXISTS (SELECT 1 FROM `list` WHERE list.listname='now_playing' AND list.value=movie.id) OR date(movie.release_date) >= NOW() - INTERVAL 7 DAY) AND (date(torrent.lastupdate) < NOW() - INTERVAL 2 HOUR)");
 		sleep(9);
 		if (mysqli_num_rows($result) > 0) {
 			elog("updating listed movies");
@@ -47,7 +47,7 @@ function UpdateTorrents() {
 	
 	if (CheckTimeElapsed("lastTorrentPopularUpdate",24)) {
 		//popularity > 1 update every day
-		$result = $db->query("SELECT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity > 1 AND (date(torrent.lastupdate) < NOW() - INTERVAL 1 DAY)");
+		$result = $db->query("SELECT DISTINCT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity > 1 AND (date(torrent.lastupdate) < NOW() - INTERVAL 1 DAY)");
 		if (mysqli_num_rows($result) > 0) {
 			elog("updating popular movies");
 			$ret=GetTorrentData($result,"1 DAY");
@@ -58,7 +58,7 @@ function UpdateTorrents() {
 	
 	if (CheckTimeElapsed("lastTorrentUnpopularUpdate",168)) {
 		//popularity <= 1 update every week
-		$result = $db->query("SELECT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity <= 1 AND (date(torrent.lastupdate) < NOW() - INTERVAL 7 DAY)");
+		$result = $db->query("SELECT DISTINCT movie.id,movie.title,movie.year FROM `movie` INNER JOIN `torrent` on movie.id = torrent.movieid WHERE movie.year > 0 AND date(movie.release_date) <= date(now()) AND movie.popularity <= 1 AND (date(torrent.lastupdate) < NOW() - INTERVAL 7 DAY)");
 		if (mysqli_num_rows($result) > 0) {
 			elog("updating unpopular movies");
 			$ret=GetTorrentData($result,"7 DAY");
@@ -94,8 +94,6 @@ function GetTorrentData($result,$interval,$delete=1) {
 			
 			if ($displayList[$index] == -1) {	//if connection failed
 				elog("Connection failed when searching for {$mname[$index]}");
-				$errors++;
-				if ($errors > 4) {elog("Operation aborted due to server being unresponsive"); return 0;}
 			}
 			else if ($displayList[$index] != -1 || trim($mname[$index]) == "") {
 				$errors=0;

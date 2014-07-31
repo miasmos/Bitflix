@@ -49,7 +49,7 @@ $(document).ready(function() {
 	
 	//remember original accordian direction
 	$('.movie-wrapper').on("mouseleave", function(event) {
-		if ($('#accordian-right').length) {
+		if ($('#accordian-right').length && $('.accordian-left').length) {
 			$(this).animate({left:-$('.info').width()},{queue:false});
 		}
 		$('#accordian-left').attr('id','');
@@ -99,15 +99,13 @@ $(document).ready(function() {
 	}).bind("mouseleave",function() {
 		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
 			if ($(this).hasClass('accordian-left')) {	//if accordian has opened to the left
-				$(this).removeClass('accordian-left');
 				$(this).find('.poster').animate({left:"0px"},200);
 				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,function(){$(this).removeClass('closing');});
-			}
-			else {	//if it has opened to the right
-				$(this).removeClass('accordian-right');
+				
 			}
 			$(this).stop(true).animate({width:posterWidth},200,function(){
 				$(this).find('.info').animate({left:posterWidth},0);
+				$(this).removeClass('accordian-left').removeClass('according-right');
 			});
 		}
 		else {	//if a trailer is playing, que it
@@ -148,11 +146,13 @@ $(document).ready(function() {
 	
 	//animate movie row scrolling
 	$('.move-left').bind("mouseenter", function(dat) {
-		$(this).parent().find('.movie-wrapper').attr('id','scrolling');
-		this.iid = setInterval(function() {
-			if ($(this).parent().find('.movie:eq('+posterNum+')')) {}
-			moveIt(0);
-		}, 20);
+		var par = $(this).parent().find('.movie-wrapper');
+		$(par).attr('id','scrolling');
+		if ($(par).children().length >= posterNum) {
+			this.iid = setInterval(function() {
+				moveIt(0);
+			}, 20);
+		}
 	}).bind("mouseleave", function() {
 		this.iid && clearInterval(this.iid);
 		$('#scrolling').attr('id','');
@@ -160,10 +160,15 @@ $(document).ready(function() {
 	
 	$('.move-right').bind("mouseenter", function() {
 		if ($(this).parent().find('.move-left').hasClass('hidden')) {$(this).parent().find('.move-left').removeClass('hidden');}	//make left arrow useable after moving right
-		$(this).parent().find('.movie-wrapper').attr('id','scrolling');
-		this.iid = setInterval(function(dat) {
-			moveIt(1);
-		}, 25);
+
+		var par = $(this).parent().find('.movie-wrapper');
+		$(par).attr('id','scrolling');
+
+		if ($(par).children().length >= posterNum) {
+			this.iid = setInterval(function(dat) {
+				moveIt(1);
+			}, 25);
+		}
 	}).bind("mouseleave", function() {
 		this.iid && clearInterval(this.iid);
 		$('#scrolling').attr('id','');
