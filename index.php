@@ -1,8 +1,25 @@
 <!doctype html>
 <html>
 <head>
+
+<!--
+	       _                _        _            _          _              _     _      _      
+          / /\             /\ \     /\ \         /\ \       _\ \           /\ \ /_/\    /\ \    
+         / /  \            \ \ \    \_\ \       /  \ \     /\__ \          \ \ \\ \ \   \ \_\   
+        / / /\ \           /\ \_\   /\__ \     / /\ \ \   / /_ \_\         /\ \_\\ \ \__/ / /   
+       / / /\ \ \         / /\/_/  / /_ \ \   / / /\ \_\ / / /\/_/        / /\/_/ \ \__ \/_/    
+      / / /\ \_\ \       / / /    / / /\ \ \ / /_/_ \/_// / /            / / /     \/_/\__/\    
+     / / /\ \ \___\     / / /    / / /  \/_// /____/\  / / /            / / /       _/\/__\ \   
+    / / /  \ \ \__/    / / /    / / /      / /\____\/ / / / ____       / / /       / _/_/\ \ \  
+   / / /____\_\ \  ___/ / /__  / / /      / / /      / /_/_/ ___/\ ___/ / /__     / / /   \ \ \ 
+  / / /__________\/\__\/_/___\/_/ /      / / /      /_______/\__\//\__\/_/___\   / / /    /_/ / 
+  \/_____________/\/_________/\_\/       \/_/       \_______\/    \/_________/   \/_/     \_\/  
+                                                                                                
+									I'm lazy. So I made this.
+										 NF + TPB = BF
+-->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Bitflix : No archives, no viruses, no bullshit</title>
+<title>Bitflix</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="js/youTubeEmbed/youTubeEmbed-jquery-1.0.css">
 <link rel="shortcut icon" href="favicon.ico" />
@@ -14,17 +31,19 @@
 		BITFLIX
 		<div id="irony">&#8482;</div>
 	</div>
-	<form method="get" id="search-form">
+	<div method="get" id="search-form">
 		<input type="submit" id="search-icon" value="f">
 	    <input autocomplete="off" type="text" name="s" id="searchfield" placeholder="movies, actors, genres">
-	</form>
+	</div>
 </div>
 <div id="content">
 	<?php include 'php/main.php' ?>
 	<div id='spacer'></div>
 </div>
 
+<?php echo "<script>var basePosterURL = '{$imgurl}';</script>"; ?>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
 <script src="js/youTubeEmbed/youTubeEmbed-jquery-1.0.js"></script>
 <script src="js/jquery.swfobject.1-1-1.min.js"></script>
 <script src="js/main.js"></script>
