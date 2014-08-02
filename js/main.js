@@ -127,17 +127,36 @@ $(document).ready(function() {
 		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
 			if ($(this).hasClass('accordian-left')) {	//if accordian has opened to the left
 				$(this).find('.poster').animate({left:"0px"},200);
-				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,function(){$(this).removeClass('closing');});
+				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,
+					function(){
+						$(this).removeClass('closing');
+				});
 				
 			}
 			$(this).stop(true).animate({width:posterWidth},200,function(){
 				$(this).find('.info').animate({left:posterWidth},0);
+				$(this).find('.quality').animate({left:posterWidth+$('.info').width()+30},0);
 				$(this).removeClass('accordian-left').removeClass('according-right');
 			});
 		}
 		else {	//if a trailer is playing, que it
 			animQue=$(this);
 		}
+	});
+
+	//animate quality reveal on poster click
+	$('#content').on('click', '.poster', function(){
+		$(this).closest('.movie').find('.quality').animate({left:posterWidth},200);
+	});
+
+	//animate quality reveals on download click
+	$('#content').on("click", '.download', function(){
+		$(this).closest('.movie').find('.quality').animate({left:posterWidth},200);
+	});
+
+	//close quality on quality click
+	$('#content').on("click",'.quality', function(){
+		$(this).find('.quality').animate({left:posterWidth+$('.info').width()+30},0);
 	});
 	
 	//embed trailer on link click

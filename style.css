@@ -94,6 +94,8 @@ body{
 	font-family:'open_r';
 	padding: 0 15px 0 55px;
 	height:inherit;
+	width:150px;
+	font-style:italic;
 }
 
 #search-icon {
@@ -101,9 +103,20 @@ body{
 	font-family: 'entypo';
 	font-size:50px;
 	color:#7e7e7e;
-	padding-left:24px;
+	padding-left:20px;
 	position:absolute;
 	top:13px;
+}
+
+#menu {
+	height: inherit;
+	position: absolute;
+	left: 590px;
+}
+
+#menu>li {
+	height:inherit;
+	line-height:50px;
 }
 
 /* body */
@@ -130,6 +143,17 @@ body{
 	pointer-events:none;
 }
 
+.movie>div.quality {margin:0px; left:554px; width: 400px; z-index:6; background-color:#FFF;}
+.quality-top {height:72%; font-size:2.2em; border-bottom: solid 1px #DDD;}
+.quality-top-only {height:100% !important; border-bottom: none !important;}
+.quality-bottom {height:28%; float:left; border-left: solid 1px #DDD;}
+.quality-bottom:first-child {border-left: none !important;}
+.quality p {text-align:center; top:50%; transform:translateY(-95%); position:relative;}
+.quality a {width:inherit; height: inherit; position:absolute;}
+.third {width:32.7%;}
+.half {width:49.7%;}
+.whole {width:100%;}
+
 .featured-movie-wrapper,.movie-wrapper {overflow:hidden; width:20000px; left:0px; position:relative;}
 .movie,.featured-movie {
 	background-color:#FFF;
@@ -139,12 +163,12 @@ body{
 	overflow:hidden;
 }
 .featured-movie {height:169px !important; width:300px !important;}
-.movie>.info,.featured-movie>.info {
+.movie>.info,.movie>.quality,.featured-movie>.info {
 	width:370px;
 	margin:15px;
 	display:inline;
 	position:absolute;
-	left:156px;
+	left:154px;
 	height:100%;
 	z-index:2;
 }
@@ -159,7 +183,7 @@ body{
 .info-title-info {font-size:.8em; float:left; padding-right:5px; line-height:67%; letter-spacing:-1px;}
 .info-menu {font-family:entypo; float:left; left:0px; bottom:5px; font-size:2em; position:absolute;}
 .info-menu-icon {padding-right:4px; cursor:pointer; display:inline-block;}
-.poster,.featured-poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:6; left:0;}
+.poster,.featured-poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:6; cursor:pointer;}
 .featured-poster {width:300px !important;}
 .poster img,.featured-poster img {opacity:0.70; height:100%; position:absolute; left:0; z-index:4}
 .poster-backer {background-color:#FFF; height:100%; width:100%; position:absolute; top:0; z-index:2}

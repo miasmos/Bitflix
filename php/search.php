@@ -18,7 +18,7 @@ if (strlen($q) >= 2 && trim($q) !== '') {
 	//company->movie_company->movie
 	//movie.year DONE
 	$ret=0;
-	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id WHERE torrent.confirmed = 1 AND torrent.rank = 1 AND movie.title LIKE '%".$q."%' OR movie.year LIKE '%".$q."%' GROUP BY movie.popularity DESC LIMIT 50",$q);
+	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id WHERE torrent.confirmed = 1 AND torrent.rank = 1 AND movie.title LIKE '%".$q."%' OR movie.year LIKE '%".$q."%' GROUP BY movie.id LIMIT 50",$q);
 	if ($ret == -1) {echo $ret;}
 }
 else {
