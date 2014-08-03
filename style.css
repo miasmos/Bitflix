@@ -174,6 +174,11 @@ body{
 }
 
 .info-overview {letter-spacing:-1px; font-family:'open_r'; font-size:0.91em; width:80%; line-height:100%;}
+.info-overview-tabs>div {letter-spacing:-1px; line-height:100%;}
+.info-overview li a {font-family:'archivo';}
+.ui-tabs-nav {padding: 15px 0 0 5px;}
+.ui-tabs-nav>li {margin-right:3px; opacity:0.3;}
+.ui-tabs-nav>li.ui-state-active {opacity:1;}
 .info-inner {bottom:25px; right:0; position:absolute; width:100%;}
 .info-title {letter-spacing:-4px; float:right; text-align:right; max-width:85%;}
 .info-rating {position:absolute; right:0; bottom:18px;}

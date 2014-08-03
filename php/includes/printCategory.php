@@ -1,6 +1,7 @@
 <?php
 function printCategory($query,$title="",$featured=0) {
 	global $db,$imgurl;
+	$tabNum=0;
 
 	$select = $db->query($query);
 	if (mysqli_num_rows($select) > 0) {
@@ -78,7 +79,23 @@ function printCategory($query,$title="",$featured=0) {
 				echo "</div>";
 			}
 			echo "<div class='info'>
-					<div class='info-overview'>{$row['overview']}</div>
+					<div class='info-overview";
+						$overviewOverflow = splitStringToArray($row['overview'],500);
+						if (gettype($overviewOverflow) == "array") {
+							echo " info-overview-tabs'>";
+							for ($k=0; $k<count($overviewOverflow); $k++) {
+								echo "<div id='info-overview-tab-".($tabNum+$k+1)."'>".$overviewOverflow[$k]."</div>";
+							}
+							echo "<ul>";
+							for ($k=0; $k<count($overviewOverflow); $k++) {
+								echo "<li><a href='#info-overview-tab-".($tabNum+$k+1)."'>".($k+1)."</a></li>";
+							}
+							$tabNum = $tabNum + count($overviewOverflow);
+							echo "</ul>";
+						} else {
+							echo "'>{$row['overview']}";
+						}
+			  echo "</div>
 					<div class='info-inner'>
 						<div class='info-rating'>";
 							if ($row['vote_average']>0) {echo "<div class='info-rating-front'><img src='images/stars.png'/></div>";
@@ -164,5 +181,16 @@ function beautifySize($size) {
 	} else {
 		return round($size,2)."GB";
 	}
+}
+
+function splitStringToArray($str,$charsPerIndex) {
+	$ret = [];
+	while(strlen($str) > $charsPerIndex) {
+		array_push($ret,substr($str,0,$charsPerIndex-1).'...');
+		$str = substr($str,$charsPerIndex);
+		if (strlen($str) <= $charsPerIndex) {array_push($ret,$str);}
+	}
+	if (count($ret) > 1) {return $ret;}
+	else {return $str;}
 }
 ?>

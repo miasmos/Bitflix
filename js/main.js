@@ -6,10 +6,12 @@ $(document).ready(function() {
 	frontend
 	fix trailer div freeze on video fail
 	fix movie pane close on trailer ending even if still being hovered
+	fix trailer being placed on wrong side in some cases
+	fix overview pagination breaking in middle of words instead of on a space
+	fix overview pagination nav sometimes being clipped by overview text
 	trailer full screen/volume?
 	advanced search?
 	finish info details, actors in movie, director
-	long-ass overview pagination
 	fix wierd row scrolling bugs
 	help menus of some kind
 	genre, year, actor menus
@@ -46,6 +48,9 @@ $(document).ready(function() {
 		posterNum=$(window).width()/$('.poster').width();	//get number of poster that fit across the screen
 		posterWidth=$('.poster').width();
 	});
+
+	//add tabulated movie descriptions for those that overflow
+	$('.info-overview-tabs').tabs({active:0,heightStyle:"auto"});
 
 	setInterval(function() {
 		if ($(animQue).children('.trailer').length == 0) {$(animQue).stop(true).animate({width:posterWidth},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
