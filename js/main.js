@@ -6,7 +6,6 @@ $(document).ready(function() {
 	frontend
 	fix trailer div freeze on video fail
 	fix movie pane close on trailer ending even if still being hovered
-	on search, animate new row into view and insert below the topmost row that's in view
 	trailer full screen/volume?
 	advanced search?
 	finish info details, actors in movie, director
@@ -258,9 +257,15 @@ $(document).ready(function() {
 					} else {
 						ret = ret.replace(/w154/g,basePosterURL+"w154");
 						ret = ret.replace(/w300/g,basePosterURL+"w300");
-						$('#content').prepend(ret);
-						$('#content').children().first().addClass('search-'+$('#searchfield').val());
-						$('#searchfield').val('').blur();
+						ret = ret.replace("class='category'","class='category' style='height:0px'");
+						$('.category').each(function(index){
+							if ($(this).offset().top > $(window).scrollTop()) {
+								$(this).before(ret);
+								$('.category').eq(index).addClass('search-'+$('#searchfield').val()).animate({height:$('.poster').height()},500);
+								$('#searchfield').val('').blur();
+								return false;
+							}
+						});
 					}
 				}
 			});
