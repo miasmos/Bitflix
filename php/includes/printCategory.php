@@ -89,7 +89,7 @@ function printCategory($query,$title="",$featured=0) {
 								if ($row['runtime'] != '0') {echo "<span style='float:right;'>{$row['runtime']}MIN</span><br/>";}
 								if ($row['year'] != '0') {echo "<span style='float:right;'>{$row['year']}</span>";}
 					  echo "</div>
-							<div class='info-title-title'>{$row['title']}</div>
+							<div class='info-title-title'><span>{$row['title']}</span></div>
 						</div>
 						<ul class='info-menu'>";
 

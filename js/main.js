@@ -9,8 +9,7 @@ $(document).ready(function() {
 	on search, animate new row into view and insert below the topmost row that's in view
 	trailer full screen/volume?
 	advanced search?
-	finish info details
-	long-ass title scrolling
+	finish info details, actors in movie, director
 	long-ass overview pagination
 	fix wierd row scrolling bugs
 	help menus of some kind
@@ -42,6 +41,7 @@ $(document).ready(function() {
 	var posterWidth=$('.poster').width();
 	var animQue=0;
 	var appendPosterNum=3;
+	var titleAnim;
 
 	$(window).resize(function() {
 		posterNum=$(window).width()/$('.poster').width();	//get number of poster that fit across the screen
@@ -101,6 +101,8 @@ $(document).ready(function() {
 	//animate info reveals on cover hover
 	$('#content').on("mouseenter", '.movie', function(event) {
 		var offset=$(this).offset();
+		doTitleAnimation($(this));
+
 		if (parseFloat(offset.left + $(this).width() + 390) > $(window).width()) { //info will clip outside of window boundaries, open left
 			$(this).find('.info').animate({left:"0px"},0);
 			$(this).stop(true).animate({width:"554px"},200);
@@ -123,11 +125,12 @@ $(document).ready(function() {
 			}
 		}
 	}).on("mouseleave", '.movie', function() {
+		clearTitleAnimation($(this));
 		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
 			if ($(this).hasClass('accordian-left')) {	//if accordian has opened to the left
 				$(this).find('.poster').animate({left:"0px"},200);
 				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,function(){
-						$(this).removeClass('closing');
+					$(this).removeClass('closing');
 				});
 				
 			}
@@ -267,5 +270,39 @@ $(document).ready(function() {
 		}
 		//$('#content').prepend('<div class="category loading" style="height:0px;"></div>');
 		//$('.loading').animate({height:$('.poster').height()});
+	}
+
+	//do scrolling on long movie titles
+	function doTitleAnimation(target) {
+		clearInterval(titleAnim);
+		titleAnim = setInterval(doAnimation,4000);
+		doAnimation();
+
+		function doAnimation() {
+			console.log('tick');
+			var targetInner = $(target).find('.info-title-title>span');
+			var targetOuter = $(target).find('.info-title-title');
+			var innerWidth = $(targetInner).width();
+			var outerWidth = $(targetOuter).width();
+
+			if (innerWidth > outerWidth) {
+				var scrollRight = outerWidth-innerWidth-5;
+				var scrollLeft = 0;
+				var direction = parseInt($(targetInner).css('left')) == scrollLeft ? scrollRight : scrollLeft;
+				if ($(targetOuter).hasClass("read")) {
+					$(targetInner).stop(true).delay(1000).animate({left:direction},3000);
+				} else {
+					$(targetInner).stop(true).delay(2000).animate({left:direction},2000);
+				}
+				$(targetOuter).addClass("read");
+			} else {
+				clearInterval(titleAnim);
+				$(targetOuter).css('overflow','visible');
+			}
+		};
+	}
+
+	function clearTitleAnimation(target) {
+		$(target).find('.info-title-title>span').animate({left:"0"},0).removeClass("read");
 	}
 });

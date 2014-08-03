@@ -179,8 +179,9 @@ body{
 .info-rating {position:absolute; right:0; bottom:18px;}
 .info-rating-front {z-index:5; position:absolute; bottom:1px; right:0;}
 .info-rating-backer {height:22px; width:0px; background-color:#000; z-index:3; position:absolute; bottom:3px; right:1px;}
-.info-title-title {font-size:1.5em; float:right; text-transform:uppercase;}
-.info-title-info {font-size:.8em; float:left; padding-right:5px; line-height:67%; letter-spacing:-1px;}
+.info-title-title {font-size:1.5em; float:right; text-transform:uppercase; white-space:nowrap; max-width:82%; overflow:hidden;}
+.info-title-title>span {position:relative; left:0px;}
+.info-title-info {font-size:.8em; float:left; padding:1px 3px 0 0; line-height:67%; letter-spacing:-1px;}
 .info-menu {font-family:entypo; float:left; left:0px; bottom:5px; font-size:2em; position:absolute;}
 .info-menu-icon {padding-right:4px; cursor:pointer; display:inline-block;}
 .poster,.featured-poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:10; cursor:pointer;}
