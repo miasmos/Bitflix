@@ -183,7 +183,7 @@ body{
 .info-title-info {font-size:.8em; float:left; padding-right:5px; line-height:67%; letter-spacing:-1px;}
 .info-menu {font-family:entypo; float:left; left:0px; bottom:5px; font-size:2em; position:absolute;}
 .info-menu-icon {padding-right:4px; cursor:pointer; display:inline-block;}
-.poster,.featured-poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:6; cursor:pointer;}
+.poster,.featured-poster {position:absolute; height:100%; width:154px; left:0px; overflow:hidden; display:inline-block; z-index:10; cursor:pointer;}
 .featured-poster {width:300px !important;}
 .poster img,.featured-poster img {opacity:0.70; height:100%; position:absolute; left:0; z-index:4}
 .poster-backer {background-color:#FFF; height:100%; width:100%; position:absolute; top:0; z-index:2}

@@ -5,11 +5,11 @@ $(document).ready(function() {
 	
 	frontend
 	fix trailer div freeze on video fail
+	fix movie pane close on trailer ending even if still being hovered
 	on search, animate new row into view and insert below the topmost row that's in view
-	default poster art
-	trailer full screen
+	trailer full screen/volume?
 	advanced search?
-	finish info details, detailed torrent info, quality pane, change poster click to open quality pane
+	finish info details
 	long-ass title scrolling
 	long-ass overview pagination
 	fix wierd row scrolling bugs
@@ -23,7 +23,6 @@ $(document).ready(function() {
 	
 	backend
 	force english results?
-	account for multiple qualities in data returns (ie. group them together so they can be presented in the ui)
 	optimize db queries
 	finish search feature
 	add more db query combinations
@@ -127,8 +126,7 @@ $(document).ready(function() {
 		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
 			if ($(this).hasClass('accordian-left')) {	//if accordian has opened to the left
 				$(this).find('.poster').animate({left:"0px"},200);
-				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,
-					function(){
+				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,function(){
 						$(this).removeClass('closing');
 				});
 				
@@ -136,7 +134,7 @@ $(document).ready(function() {
 			$(this).stop(true).animate({width:posterWidth},200,function(){
 				$(this).find('.info').animate({left:posterWidth},0);
 				$(this).find('.quality').animate({left:posterWidth+$('.info').width()+30},0);
-				$(this).removeClass('accordian-left').removeClass('according-right');
+				$(this).removeClass('accordian-left').removeClass('accordian-right');
 			});
 		}
 		else {	//if a trailer is playing, que it
@@ -145,13 +143,10 @@ $(document).ready(function() {
 	});
 
 	//animate quality reveal on poster click
-	$('#content').on('click', '.poster', function(){
-		$(this).closest('.movie').find('.quality').animate({left:posterWidth},200);
-	});
-
-	//animate quality reveals on download click
-	$('#content').on("click", '.download', function(){
-		$(this).closest('.movie').find('.quality').animate({left:posterWidth},200);
+	$('#content').on('click', '.poster,.download', function(){
+		var movie = $(this).closest('.movie');
+		var targetLeft = $(movie).hasClass('accordian-right') ? posterWidth : 0;
+		$(movie).find('.quality').animate({left:targetLeft},200);
 	});
 
 	//close quality on quality click
@@ -164,6 +159,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		if ($('.trailer').length == 0) {
 			$(this).closest('.movie').append("<div class='trailer hidden'></div");
+			$('.trailer').css('left', $(this).closest('.movie').hasClass('accordian-left') ? 0 : posterWidth);
 			$('.trailer').youTubeEmbed({
 				video:'http://www.youtube.com/watch?v='+$(this).attr('data-href'),
 				width:400,
@@ -177,8 +173,10 @@ $(document).ready(function() {
 			var newTrailer=$(this);
 			$(this).closest('.movie').append("<div class='trailer hidden'></div>");
 			$('.trailer').not('.hidden').parent().find('.poster img').stop(true).animate({opacity:0.7},100);
+			$('.trailer').not('.hidden').parent().find('.poster').stop(true).animate({left:0},200);
 			$('.trailer').not('.hidden').closest('.movie').stop(true).animate({width:posterWidth},200,function(){
 				$('.trailer').not('.hidden').remove();
+				$('.trailer').css('left', $(this).closest('.movie').hasClass('accordian-left') ? 0 : posterWidth);
 				$('.trailer').youTubeEmbed({
 					video:'http://www.youtube.com/watch?v='+$(newTrailer).attr('data-href'),
 					progressBar:true,

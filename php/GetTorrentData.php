@@ -22,10 +22,11 @@ echo("execution time: ".$timediff."s");
 
 function UpdateTorrents() {
 	global $db;
-	
+	$date = date('Y-m-d', strtotime("+3 months"));
+
 	if (CheckTimeElapsed("lastNewTorrentUpdate",12)) {
 		//movies that were just added to db update every 12 hours
-		$result = $db->query("SELECT id,title,year FROM `movie` t1 WHERE NOT EXISTS (SELECT 1 FROM `torrent` t2 WHERE t1.id=t2.movieid) AND year > 0 AND date(t1.release_date) <= date(now())");	//check for new entries and do them first
+		$result = $db->query("SELECT id,title,year FROM `movie` t1 WHERE NOT EXISTS (SELECT 1 FROM `torrent` t2 WHERE t1.id=t2.movieid) AND year > 0 AND date(t1.release_date) <= '".$date."' ORDER BY year DESC LIMIT 10000");	//check for new entries and do them first
 		if (mysqli_num_rows($result) > 0) {
 			elog("updating recently added movies");
 			$ret=GetTorrentData($result,"1 DAY",0);
@@ -94,6 +95,8 @@ function GetTorrentData($result,$interval,$delete=1) {
 			
 			if ($displayList[$index] == -1) {	//if connection failed
 				elog("Connection failed when searching for {$mname[$index]}");
+				$errors++;
+				if ($errors > 4) {exit;}
 			}
 			else if ($displayList[$index] != -1 || trim($mname[$index]) == "") {
 				$errors=0;
@@ -132,7 +135,6 @@ function GetTorrentData($result,$interval,$delete=1) {
 }
 
 function findBestTorrent($movie, $mname, $dex, $_quality) {
-	elog($_quality);
 	$minSeeds=1;	//minimum seeds required to be included
 	$minSeedRatio=0.7;
 	$seedThreshold=50;	//threshold at which to apply seed ratio filtering
@@ -152,14 +154,14 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 	if (strlen($_quality) == 0) {$qualities = array("1080", "720", "dvdrip", "cam");}	//if passed $_quality of 0, compute all qualities
 	else {$qualities = array($_quality);}	//if passed nonzero $_quality, compute only that quality
 	$keywords = array("1080"=> array ("bdrip", "brrip", "blu-ray", "bluray", "bdr", "bdscr"), "720"=> array ("bdrip", "brrip", "blu-ray", "bluray", "bdr", "bdscr"), "dvdrip"=> array ("480", "dvd-rip", "dvdrip", "dvdr", "dvd", "screener", "scr", "dvdscr", "dvdscreener", "r5", "telecine", "tc", "ddc"), "Cam"=> array ("telesync", "camrip", "cam", "pdvd", "predvd", "pre-dvd"));
-	$blackList = array("3d", "trilogy", "duology", "quadrilogy", "quintrilogy", "spanish", "french", "brazilian", "russian", "portugese", "dutch", "german", "swedish", "saga", "anthology", "swesub");
+	$blackList = array("3d", "trilogy", "duology", "quadrilogy", "quintrilogy", "spanish", "french", "brazilian", "russian", "portugese", "cantonese", "japanese", "dutch", "german", "swedish", "saga", "anthology", "swesub");
 	
 	$return = array();
 	$movieTitle=normalize($movie->title);
 	
 	foreach ($qualities as $ind=>$quality) {
 		if (strlen($_quality) == 0) {elog("looking for ".$quality." using year search");}
-		else {elog("<br/>looking for ".$quality." using non-year search<br/>");}
+		else {elog("looking for ".$quality." using non-year search");}
 		
 		if ($quality == "1080" || $quality == "720") {$torResult = $torResultHD;}
 		else {$torResult = $torResultSD;}
@@ -289,7 +291,6 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				if ($curTor["Score"] > $hiScore) {$hiScore = $curTor["Score"];}
 			}
 			
-			elog(strlen($_quality) == 0);
 			/*if (($hiScore <= 1 || count($torResult) == 0) && strlen($_quality) == 0) {	//outer search failed, try without year stipulated
 				$noYearSearch = findBestTorrent($movie, $mname, $dex, $quality);
 				
@@ -303,7 +304,7 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 				continue;
 			}
 			elseif (($hiScore <= 1 || count($torResult) == 0) && strlen($_quality) > 0) {return null;}	//inner search failed, no matches possible*/
-			elog("hiscore: ".$hiScore."<br/>");
+			//elog("hiscore: ".$hiScore."<br/>");
 			if ($hiScore <= 1 || count($torResult) == 0) {$return[$quality]=assignMatches($movie, 0, array()); continue;}
 			
 			$tempKeys = array();
@@ -375,7 +376,6 @@ function findBestTorrent($movie, $mname, $dex, $_quality) {
 			elseif (($hiScore <= 1 || count($torResult) == 0) && strlen($_quality) > 0) {return null;}	//inner search failed, no matches possible*/
 			$return[$quality]=assignMatches($movie, 0, array());
 		}
-		elog("</div>");
 	}
 	return $return;
 }
@@ -418,23 +418,25 @@ function newTPBSearch($q, $year, $category, $returns) {
 	}
 
 	if (strlen($year) == 0 && strlen($q) == 0) {
-		$return=curl_get('http://thepiratebay.se/browse/' . $category . '/0/' . $orderby);
+		$return=curl_get('http://thepiratebay.si/browse/' . $category . '/0/' . $orderby);
 		elog('http://thepiratebay.sx/browse/' . $category . '/0/' . $orderby);
 	}
 	elseif (strlen($year) == 0 && strlen($q) > 0) {
-		$return=curl_get('http://thepiratebay.se/search/' . $q . '/0/' . $orderby . '/' . $category);
+		$return=curl_get('http://thepiratebay.si/search/' . $q . '/0/' . $orderby . '/' . $category);
 		elog('http://thepiratebay.sx/search/' . $q . '/0/' . $orderby . '/' . $category);
 	}
 	else {
-		$return=curl_get('http://thepiratebay.se/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category);
+		$return=curl_get('http://thepiratebay.si/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category);
 		elog('http://thepiratebay.sx/search/' . $q . '+' . $year . '/0/' . $orderby . '/' . $category);
 	}
 	
 	//extract the important data from the html
 	if (strpos($return, "Could not connect to caching server") !== false || empty($return)) {
+		//elog("Could not connect to caching server");
 		return -1;
 	}
 	if (strpos($return, "No hits. Try adding") !== false) {	//if no match was found
+		//elog("Not Found");
 		return 0;
 	}
 	else {

@@ -33,7 +33,7 @@
 	</div>
 	<div method="get" id="search-form">
 		<input type="submit" id="search-icon" value="f">
-	    <input autocomplete="off" type="text" name="s" id="searchfield" placeholder="movies, actors, genres...">
+	    <input autocomplete="off" type="text" id="searchfield" placeholder="movies, actors, genres...">
 	</div>
 	<ul id="menu">
 		<!--li class="menu-browse">BROWSE</li>-->

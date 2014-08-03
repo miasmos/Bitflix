@@ -11,7 +11,7 @@ $imgurl = $imgurl['value'];
 //SELECT * FROM `movie` WHERE MONTH(release_date) = MONTH(NOW()) AND DAY(release_date) = DAY(NOW());
 
 //list based stuff
-//printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 LIMIT 30","Now Playing");
+printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 LIMIT 30","Now Playing");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='popular_actors' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY movie.id LIMIT 120","Popular Actors");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE list.listname='top_rated' AND torrent.confirmed=1 AND torrent.rank=1 GROUP BY movie.id LIMIT 120","Top Rated");
 

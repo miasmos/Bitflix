@@ -23,7 +23,11 @@ function printCategory($query,$title="",$featured=0) {
 			if (!$featured) {
 				echo "<div class='movie'><div class='poster'>";
 				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
-				echo "<img src='{$imgurl}w154/{$row['poster_image']}' />";
+				if ($row['poster_image'] != '') {
+					echo "<img src='{$imgurl}w154/{$row['poster_image']}' />";
+				} else {
+					echo "<img src='images/default-154.jpg' />";
+				}
 				if (!$multipleQualities) {echo "</a>";}
 			}
 			else {

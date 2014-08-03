@@ -1,3 +1,4 @@
+
 <?php
 include 'includes/dbConnect.php';
 include 'includes/queryMovieAPI.php';
@@ -7,9 +8,10 @@ $starttime = microtime(true);
 $db = dbConnect();
 
 configCheck();
-//deleteUnconfirmedTorrents();
+deleteUnconfirmedTorrents();
 listUpdates();
 movieUpdates();
+//generateCategories();
 $db->close();
 
 function configCheck() {	//check for movie db url changes
@@ -27,11 +29,14 @@ function configCheck() {	//check for movie db url changes
 function deleteUnconfirmedTorrents() {
 	global $db;
 	$result = $db->query("SELECT magnet FROM `torrent` WHERE confirmed='0' AND date(torrent.lastupdate) < DATE_SUB(NOW(), INTERVAL 1 DAY)");
+	$count = $result->num_rows;
+	$i = 1;
 
 	while ($row = mysqli_fetch_object($result)) {
 		$magnet = getMagnetLink($row->magnet);
 		$db->query("INSERT IGNORE INTO `badtorrents` (`id`) VALUES ('{$magnet}')");
 		elog($db->error);
+		$i++;
 	}
 	$db->query("DELETE FROM `torrent` WHERE confirmed='0' AND date(torrent.lastupdate) < DATE_SUB(NOW(), INTERVAL 1 DAY)");
 }
@@ -60,7 +65,7 @@ function listUpdates() {	//id, list (name of list), name (name of entry), value 
 				$datas=$datas->results;
 				foreach($datas as $id2=>$value2) {
 					if ($value2->adult != 'true') {
-						print_r($value2); echo('<br/>');
+						//print_r($value2); echo('<br/>');
 						$db->query("INSERT INTO list (`listname`,`value`,`date_added`) VALUES ('".$value."','".$value2->id."',Now()) 
 						ON DUPLICATE KEY UPDATE value='{$value2->id}',date_added=Now()");
 						if (!$db->error) {$delete=true;$error=0;}
@@ -95,6 +100,7 @@ function movieUpdates() {	//check for movie db changes
 			$endtime = microtime(true);
 			$changeIDs = $datas->results;
 			$pages = $datas->total_pages;
+			
 			foreach($changeIDs as $id=>$value) {
 				elog('updating: '.$value->id);
 				if ($value->adult != 'true') {
@@ -113,6 +119,29 @@ function movieUpdates() {	//check for movie db changes
 		}
 		else {elog("Operation aborted due to server being unresponsive"); return 0;}
 	}
+}
+
+function generateCategories() {
+	global $db; $sql = "";
+
+	//update genre lists
+	$result = $db->query("SELECT * FROM `genre`");
+	while ($row = mysqli_fetch_object($result)) {
+		$result1 = $db->query("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `movie_genre` on movie_genre.movieid=movie.id INNER JOIN `genre` on movie_genre.genreid = genre.id WHERE genre.genre = '".$row->genre."' AND torrent.confirmed=1");
+		while ($row1 = mysqli_fetch_object($result1)) {
+			//if (strlen($sql . "INSERT INTO list (`listname`,`value`,`date_added`) VALUES ('".$row->genre."','".$row1->id."',Now()) ON DUPLICATE KEY UPDATE date_added=Now();") > 990000) {
+				//$db->multi_query($sql);
+				//echo $db->error;
+				//$sql = "";
+			//}
+			//$sql .= "INSERT INTO list (`listname`,`value`,`date_added`) VALUES ('".$row->genre."','".$row1->id."',Now()) ON DUPLICATE KEY UPDATE date_added=Now();";
+			if ($row1->id != $last) {
+				$db->query("INSERT INTO list (`listname`,`value`,`date_added`) VALUES ('".$row->genre."','".$row1->id."',Now()) ON DUPLICATE KEY UPDATE date_added=Now();");
+			}
+			$last = $row1->id;
+		}
+	}
+	//$db->multi_query($sql);
 }
 
 function getDayDeficit($last) {
@@ -203,6 +232,4 @@ function elog($string) {
 	//echo ($string."<br/>");
 	error_log(date("Y-m-d H:i:s").": ".$string."\r\n", 3, dirname(dirname(__FILE__)).'/logs/DailyUpdate.log');
 }
-
-
 ?>
