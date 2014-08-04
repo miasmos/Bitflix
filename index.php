@@ -32,7 +32,7 @@
 		<div id="irony">&#8482;</div>
 	</div>
 	<div method="get" id="search-form">
-		<input type="submit" id="search-icon" value="f">
+		<button type="submit" id="search-icon"><i class="icon-search"></i></button>
 	    <input autocomplete="off" type="text" id="searchfield" placeholder="movies, actors, genres...">
 	</div>
 	<ul id="menu">
@@ -49,6 +49,7 @@
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/youTubeEmbed/youTubeEmbed-jquery-1.0.js"></script>
 <script src="js/jquery.swfobject.1-1-1.min.js"></script>
+<script src="js/jquery.lazy.min.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

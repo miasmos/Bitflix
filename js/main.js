@@ -4,22 +4,32 @@ $(document).ready(function() {
 	TO DO
 	
 	frontend
-	fix trailer div freeze on video fail
-	fix movie pane close on trailer ending even if still being hovered
-	fix trailer being placed on wrong side in some cases
-	fix overview pagination breaking in middle of words instead of on a space
-	fix overview pagination nav sometimes being clipped by overview text
-	trailer full screen/volume?
+
+	major
 	advanced search?
-	finish info details, actors in movie, director
-	fix wierd row scrolling bugs
 	help menus of some kind
 	genre, year, actor menus
 	program 'featured' row..  info revealed by default, wider, full art
 	implement header, same size as featured row, explains what's going on etc.
-	fix search icon, change 'play video' icon, change download icon
+
+	medium
+	trailer full screen/volume?
+	finish info details, actors in movie, director
 	minify everything and worry about page size
 	analytics?
+	fix encoding issues
+	make sure images load last
+	cross-browser
+
+	minor
+	fix trailer div freeze on video fail
+	fix movie pane close on trailer ending even if still being hovered
+	fix trailer being placed on wrong side in some cases
+	fix overview pagination breaking in middle of words instead of on a space
+	fix wierd row scrolling bugs
+	fix row wrapping not triggering in some cases
+	add hover delay for opening a movie pane?
+	fix title opacity changing to 1 when trailer is playing and cursor is not in row
 	
 	backend
 	force english results?
@@ -44,13 +54,22 @@ $(document).ready(function() {
 	var appendPosterNum=3;
 	var titleAnim;
 
+	//load images as they appear in the dom
+	$('img.lazy').lazy({effect:"fadeIn",effectTime:"slow",afterLoad: function(element){
+		$(element).closest('.movie').find('.poster-placeholder').fadeOut();
+	}});
+
+	//add tabulated movie descriptions for those that overflow
+	$('.info-overview-tabs').tabs({active:0});
+	$('.info-overview-tabs').each(function(){
+		var newTop = $(this).height();
+		$(this).find('.ui-tabs-nav').css('top',newTop);
+	});
+
 	$(window).resize(function() {
 		posterNum=$(window).width()/$('.poster').width();	//get number of poster that fit across the screen
 		posterWidth=$('.poster').width();
 	});
-
-	//add tabulated movie descriptions for those that overflow
-	$('.info-overview-tabs').tabs({active:0,heightStyle:"auto"});
 
 	setInterval(function() {
 		if ($(animQue).children('.trailer').length == 0) {$(animQue).stop(true).animate({width:posterWidth},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
@@ -150,7 +169,7 @@ $(document).ready(function() {
 	});
 
 	//animate quality reveal on poster click
-	$('#content').on('click', '.poster,.download', function(){
+	$('#content').on('click', '.poster,.icon-down-bold', function(){
 		var movie = $(this).closest('.movie');
 		var targetLeft = $(movie).hasClass('accordian-right') ? posterWidth : 0;
 		$(movie).find('.quality').animate({left:targetLeft},200);
@@ -162,7 +181,7 @@ $(document).ready(function() {
 	});
 	
 	//embed trailer on link click
-	$('#content').on("click",'.trailer-link',function(event) {
+	$('#content').on("click",'.icon-youtube-play',function(event) {
 		event.preventDefault();
 		if ($('.trailer').length == 0) {
 			$(this).closest('.movie').append("<div class='trailer hidden'></div");
@@ -289,7 +308,6 @@ $(document).ready(function() {
 		doAnimation();
 
 		function doAnimation() {
-			console.log('tick');
 			var targetInner = $(target).find('.info-title-title>span');
 			var targetOuter = $(target).find('.info-title-title');
 			var innerWidth = $(targetInner).width();

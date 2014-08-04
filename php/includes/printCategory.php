@@ -16,18 +16,19 @@ function printCategory($query,$title="",$featured=0) {
 
 		for($i=0;$i<count($select);$i++) {
 			$row = $select[$i];
+			$mtitle = utf8_decode($row['title']);
 			$multipleQualities = array_key_exists('other_qualities',$row) ? true : false;
 
 			if (empty($title)) {if (!empty($row['genre'])) {$title=$row['genre'];}}
 			$rating=strval(104*(floatval($row['vote_average'])/10));
 			if ($row['overview'] == null || $row['overview'] == "") {$row['overview'] = "An overview is not available.";}
 			if (!$featured) {
-				echo "<div class='movie'><div class='poster'>";
+				echo "<div class='movie'><div class='poster'><span class='poster-placeholder'>{$mtitle}</span>";
 				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
 				if ($row['poster_image'] != '') {
-					echo "<img src='{$imgurl}w154/{$row['poster_image']}' />";
+					echo "<img class='lazy' data-src='{$imgurl}w154/{$row['poster_image']}' src='images/loading.gif' alt='{$mtitle}'/>";
 				} else {
-					echo "<img src='images/default-154.jpg' />";
+					echo "<img class='lazy' data-src='images/default-154.jpg' src='images/loading.gif' alt='{$mtitle}'/>";
 				}
 				if (!$multipleQualities) {echo "</a>";}
 			}
@@ -80,7 +81,7 @@ function printCategory($query,$title="",$featured=0) {
 			}
 			echo "<div class='info'>
 					<div class='info-overview";
-						$overviewOverflow = splitStringToArray($row['overview'],500);
+						$overviewOverflow = splitStringToArray(utf8_decode($row['overview']),500);
 						if (gettype($overviewOverflow) == "array") {
 							echo " info-overview-tabs'>";
 							for ($k=0; $k<count($overviewOverflow); $k++) {
@@ -93,7 +94,7 @@ function printCategory($query,$title="",$featured=0) {
 							$tabNum = $tabNum + count($overviewOverflow);
 							echo "</ul>";
 						} else {
-							echo "'>{$row['overview']}";
+							echo "'>{$overviewOverflow}";
 						}
 			  echo "</div>
 					<div class='info-inner'>
@@ -105,17 +106,15 @@ function printCategory($query,$title="",$featured=0) {
 							<div class='info-title-info'>";
 								if ($row['runtime'] != '0') {echo "<span style='float:right;'>{$row['runtime']}MIN</span><br/>";}
 								if ($row['year'] != '0') {echo "<span style='float:right;'>{$row['year']}</span>";}
-					  echo "</div>
-							<div class='info-title-title'><span>{$row['title']}</span></div>
+					  echo "</div>";
+						echo "<div class='info-title-title'><span>{$mtitle}</span></div>
 						</div>
 						<ul class='info-menu'>";
 
 					  if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
-						echo "<li class='info-menu-icon download'>w</li>";
+						echo "<li class='info-menu-icon icon-down-bold'></li>";
 					  if (!$multipleQualities) {echo "</a>";}
-					  if (!empty($row['trailer']) && $row['trailer'] != null) {echo "<li class='info-menu-icon'>
-								<a class='trailer-link' href='' data-href='{$row['trailer']}'>5</a>
-							</li>";}
+					  if (!empty($row['trailer']) && $row['trailer'] != null) {echo "<li class='info-menu-icon icon-youtube-play' data-href='{$row['trailer']}'></li>";}
 				  echo "<ul>
 					</div>
 				</div>
