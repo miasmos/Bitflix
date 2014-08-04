@@ -55,8 +55,10 @@ $(document).ready(function() {
 	var titleAnim;
 
 	//load images as they appear in the dom
-	$('img.lazy').lazy({effect:"fadeIn",effectTime:"slow",afterLoad: function(element){
+	$('img.lazy').lazy({effect:"fadeIn",effectTime:"slow",delay:0,afterLoad: function(element){
 		$(element).closest('.movie').find('.poster-placeholder').fadeOut();
+	},onError: function(element){
+		$(element).attr('src','images/default-154.jpg');
 	}});
 
 	//add tabulated movie descriptions for those that overflow
