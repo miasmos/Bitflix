@@ -11,14 +11,19 @@ $(document).ready(function() {
 	genre, year, actor menus
 	program 'featured' row..  info revealed by default, wider, full art
 	implement header, same size as featured row, explains what's going on etc.
+	do something with empty space when a category can't fill the screen
 
 	medium
 	trailer full screen/volume?
-	finish info details, actors in movie, director
 	minify everything and worry about page size
 	analytics?
 	fix encoding issues
 	cross-browser
+	rate-limiting
+	error status in bottom-right / loading indicator when fetching a search
+	implement 'like' movie searches when clicking on a movie title
+	implement year movie search when clicking on a movie year
+	start removing categories that have been viewed after X number of categories have been revealed (prevent lag)
 
 	minor
 	fix trailer div freeze on video fail
@@ -28,6 +33,7 @@ $(document).ready(function() {
 	fix wierd row scrolling bugs
 	fix row wrapping not triggering in some cases
 	add hover delay for opening a movie pane?
+	fix fetching of actors even if they have already been populated
 	fix title opacity changing to 1 when trailer is playing and cursor is not in row
 	
 	backend
@@ -37,6 +43,8 @@ $(document).ready(function() {
 	implement randomization
 	fix dailyUpdate and GetTorrentData scripts
 	server redundancy
+	set up script intervals
+	move to linux virtual machine/remote server
 
 	future
 	implement user account system
@@ -44,6 +52,7 @@ $(document).ready(function() {
 	RPC capability
 	categories based on downloaded or liked movies
 	taste preferences
+	tv shows
 	
 	*/
 	var posterNum=$(window).width()/$('.poster').width();
