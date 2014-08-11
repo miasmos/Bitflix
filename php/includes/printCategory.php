@@ -23,7 +23,7 @@ function printCategory($query,$title="",$featured=0) {
 			$rating=strval(104*(floatval($row['vote_average'])/10));
 			if ($row['overview'] == null || $row['overview'] == "") {$row['overview'] = "An overview is not available.";}
 			if (!$featured) {
-				echo "<div class='movie'><div class='poster'>";
+				echo "<div class='movie' id='{$row['movieid']}'><div class='poster'>";
 				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
 				if ($row['poster_image'] != '') {
 					echo "<img class='lazy' src='{$imgurl}w154/{$row['poster_image']}' alt='{$mtitle}'/>";
@@ -97,6 +97,7 @@ function printCategory($query,$title="",$featured=0) {
 							echo "'>{$overviewOverflow}";
 						}
 			  echo "</div>
+			  		<div class='info-actors'></div>
 					<div class='info-inner'>
 						<div class='info-rating'>";
 							if ($row['vote_average']>0) {echo "<div class='info-rating-front'><img src='images/stars.png'/></div>";
@@ -126,6 +127,23 @@ function printCategory($query,$title="",$featured=0) {
 	} else {
 		return -1;
 	}
+}
+
+function printActors($query) {
+	global $db;
+
+	$select = $db->query($query);
+	if (mysqli_num_rows($select) > 0) {
+		$select = mysqli_fetch_all($select,MYSQLI_ASSOC);
+
+		for($i=0;$i<count($select);$i++) {
+			$row = $select[$i];
+			echo "<span class='actor'>{$row['name']}</span>";
+			if ($i < count($select)-1) {echo ", ";}
+		}
+		return 1;
+	}
+	return -1;
 }
 
 function collapseQualities($select) {

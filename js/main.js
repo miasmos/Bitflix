@@ -69,7 +69,7 @@ $(document).ready(function() {
 	});
 
 	setInterval(function() {
-		if ($(animQue).children('.trailer').length == 0) {$(animQue).stop(true).animate({width:posterWidth},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
+		if ($(animQue).children('.trailer').length === 0) {$(animQue).stop(true).animate({width:posterWidth},200); $(animQue).find('.poster img').stop(true).animate({opacity:0.75},100); animQue=0;}	//reset the movie that just had a trailer
 		
 		//check for row wrap
 		$('.movie-wrapper').each(function(index) {
@@ -111,7 +111,7 @@ $(document).ready(function() {
 	});
 	$('#content').on("mouseleave", '.movie,.category-title', function(event) {
 		$(this).closest('.category-title').stop(true).fadeTo(400,0.85);
-		if ($(this).children('.trailer').length == 0) {$(this).find('.poster img').stop(true).animate({opacity:0.70},100);}
+		if ($(this).children('.trailer').length === 0) {$(this).find('.poster img').stop(true).animate({opacity:0.70},100);}
 	});
 	
 	//animate category title opacity on hover
@@ -120,6 +120,25 @@ $(document).ready(function() {
 	
 	//animate info reveals on cover hover
 	$('#content').on("mouseenter", '.movie', function(event) {
+		//get actors in movie
+		if (!$('this').find('info-actors').hasClass('f')) {
+			$.ajax({
+				type: "POST",
+				context: this,
+				url: "php/actors.php",
+				data: { query: $(this).attr('id') },
+				cache: false,
+				success: function(ret) {
+					if (ret != -1) {
+						$(this).find('.info-actors').addClass('f');
+						$(this).find('.info-rating').animate({bottom:'38px'},200,function(){
+							$(this).closest('.info').find('.info-actors').append(ret).fadeIn();
+						});
+					}
+				}
+			});
+		}
+
 		var offset=$(this).offset();
 		doTitleAnimation($(this));
 
@@ -146,7 +165,7 @@ $(document).ready(function() {
 		}
 	}).on("mouseleave", '.movie', function() {
 		clearTitleAnimation($(this));
-		if ($(this).children('.trailer').length == 0) {	//if a trailer isn't playing here
+		if ($(this).children('.trailer').length === 0) {	//if a trailer isn't playing here
 			if ($(this).hasClass('accordian-left')) {	//if accordian has opened to the left
 				$(this).find('.poster').animate({left:"0px"},200);
 				$(this).parent().addClass('closing').stop(true).animate({left:"+=400px"},200,function(){
@@ -176,11 +195,16 @@ $(document).ready(function() {
 	$('#content').on("click",'.quality', function(){
 		$(this).find('.quality').animate({left:posterWidth+$('.info').width()+30},0);
 	});
+
+	//search for an actor on click
+	$('#content').on("click",'.actor', function() {
+		doSearch($(this).text());
+	});
 	
 	//embed trailer on link click
 	$('#content').on("click",'.icon-youtube-play',function(event) {
 		event.preventDefault();
-		if ($('.trailer').length == 0) {
+		if ($('.trailer').length === 0) {
 			$(this).closest('.movie').append("<div class='trailer hidden'></div");
 			$('.trailer').css('left', $(this).closest('.movie').hasClass('accordian-left') ? 0 : posterWidth);
 			$('.trailer').youTubeEmbed({
@@ -243,8 +267,8 @@ $(document).ready(function() {
 	
 	function moveIt(dir) {
 		if (dir==1) {$('#scrolling').animate({left:"-=10"},10);}
-		else if (dir==0) {$('#scrolling').animate({left:"+=10"},10);}
-	};
+		else if (dir===0) {$('#scrolling').animate({left:"+=10"},10);}
+	}
 
 
 	//bind search calls
@@ -257,20 +281,23 @@ $(document).ready(function() {
 	});
 
 	$('#search-icon').click(function(){
-		if ($('#searchfield').val() == '') {
+		if ($('#searchfield').val() === '') {
 			$('#searchfield').focus();
 		} else {
 			doSearch();
 		}
 	});
 
-	function doSearch() {
-		if ($('#searchfield').val().length >= 2 && !$('.search-'+$('#searchfield').val()).length) {
+	function doSearch(query) {
+		query = typeof(query) !== 'undefined' ? query : $('#searchfield').val();
+		temp = query.replace(/ /g,'-'); temp = temp.toLowerCase();
+
+		if (query.length >= 2 && !$('.search-'+temp).length) {
 			Pace.ignore(function() {
 				$.ajax({
 					type: "POST",
 					url: "php/search.php",
-					data: { query: $('#searchfield').val() },
+					data: { query: query },
 					cache: false,
 					success: function(ret) {
 						if (ret == -1) {
@@ -290,7 +317,7 @@ $(document).ready(function() {
 										$(this).find('.ui-tabs-nav').css('top',newTop);
 									});
 
-									$('.category').eq(index).addClass('search-'+$('#searchfield').val()).animate({height:$('.poster').height()},500);
+									$('.category').eq(index).addClass('search-'+temp).animate({height:$('.poster').height()},500);
 									$('#searchfield').val('').blur();
 									return false;
 								}
@@ -331,7 +358,7 @@ $(document).ready(function() {
 				clearInterval(titleAnim);
 				$(targetOuter).css('overflow','visible');
 			}
-		};
+		}
 	}
 
 	function clearTitleAnimation(target) {

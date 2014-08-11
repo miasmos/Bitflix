@@ -4,6 +4,7 @@ include 'includes/dbConnect.php';
 $db = dbConnect();
 include 'includes/printCategory.php';
 
+if (empty($_POST['query'])) {echo -1; exit;}
 $q = preg_replace("/[^A-Za-z0-9]/", " ", $_POST['query']);
 $q = $db->real_escape_string($q);
 
@@ -17,8 +18,8 @@ if (strlen($q) >= 2 && trim($q) !== '') {
 	//keyword->movie_keyword->movie
 	//company->movie_company->movie
 	//movie.year DONE
-	$ret=0;
-	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id WHERE torrent.confirmed = 1 AND torrent.rank = 1 AND movie.title LIKE '%".$q."%' OR movie.year LIKE '%".$q."%' GROUP BY movie.id LIMIT 50",$q);
+	//$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id WHERE torrent.confirmed = 1 AND torrent.rank = 1 AND movie.title LIKE '%".$q."%' OR movie.year LIKE '%".$q."%' GROUP BY movie.id LIMIT 50",$q);
+	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` ON torrent.movieid = movie.id INNER JOIN `movie_actor` ON movie.id = movie_actor.movieid INNER JOIN `actor` ON actor.id = movie_actor.actorid WHERE actor.name = '{$q}' LIMIT 50",$q);
 	if ($ret == -1) {echo $ret;}
 }
 else {

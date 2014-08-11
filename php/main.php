@@ -10,6 +10,7 @@ $imgurl = $imgurl['value'];
 //released on this day
 //SELECT * FROM `movie` WHERE MONTH(release_date) = MONTH(NOW()) AND DAY(release_date) = DAY(NOW());
 
+//UPDATE movie SET rid = (UNIX_TIMESTAMP() + (RAND() * 86400))
 //list based stuff
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE rid > UNIX_TIMESTAMP( ) AND list.listname='now_playing' AND torrent.confirmed=1 AND torrent.rank=1 ORDER BY rid DESC LIMIT 30","Now Playing");
 printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id INNER JOIN `list` on movie.id = list.value WHERE rid > UNIX_TIMESTAMP( ) AND list.listname='popular_actors' AND torrent.confirmed=1 AND torrent.rank=1 ORDER BY rid DESC LIMIT 120","Popular Actors");

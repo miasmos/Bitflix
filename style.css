@@ -180,6 +180,7 @@ body{
 .info-inner {bottom:25px; right:0; position:absolute; width:100%;}
 .info-title {letter-spacing:-4px; float:right; text-align:right; max-width:85%;}
 .info-rating {position:absolute; right:0; bottom:18px;}
+.info-actors {position:absolute; bottom:48px; width:100%; text-align:right; font-family: open_r; font-size:0.8em; display:none; cursor:pointer;}
 .info-rating-front {z-index:5; position:absolute; bottom:1px; right:0;}
 .info-rating-backer {height:22px; width:0px; background-color:#000; z-index:3; position:absolute; bottom:3px; right:1px;}
 .info-title-title {font-size:1.5em; float:right; text-transform:uppercase; white-space:nowrap; max-width:82%; overflow:hidden;}
