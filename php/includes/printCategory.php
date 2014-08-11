@@ -5,14 +5,24 @@ function printCategory($query,$title="",$featured=0) {
 
 	$select = $db->query($query);
 	if (mysqli_num_rows($select) > 0) {
-		if (!$featured) {
-			echo "<div class='category'><div class='movie-wrapper'>";
-		} else {
-			echo "<div class='category'><div class='featured-movie-wrapper'>";
-		}
-
 		$select = mysqli_fetch_all($select,MYSQLI_ASSOC);
 		$select = collapseQualities($select);
+
+		echo "<div class='category'>";
+
+		$posterNudge=0;
+		if (array_key_exists('name', $select[0]) && array_key_exists('picture', $select[0]) && !$featured) {
+			if ($select[0]['picture'] != '') {
+				echo "<div class='profile'><img src='{$imgurl}w185{$select[0]['picture']}' alt='{$select[0]['name']}'/></div>";
+				$posterNudge=154;
+			}
+		}
+
+		if (!$featured) {
+			echo "<div class='movie-wrapper' style='left:{$posterNudge}px'>";
+		} else {
+			echo "<div class='featured-movie-wrapper'>";
+		}
 
 		for($i=0;$i<count($select);$i++) {
 			$row = $select[$i];
@@ -26,7 +36,7 @@ function printCategory($query,$title="",$featured=0) {
 				echo "<div class='movie' id='{$row['movieid']}'><div class='poster'>";
 				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
 				if ($row['poster_image'] != '') {
-					echo "<img class='lazy' src='{$imgurl}w154/{$row['poster_image']}' alt='{$mtitle}'/>";
+					echo "<img class='lazy' src='{$imgurl}w154{$row['poster_image']}' alt='{$mtitle}'/>";
 				} else {
 					echo "<img class='lazy' src='images/default-154.jpg' alt='{$mtitle}'/>";
 				}
@@ -35,7 +45,7 @@ function printCategory($query,$title="",$featured=0) {
 			else {
 				echo "<div class='featured-movie'>
 				<div class='featured-poster'>";
-				echo "<img src='{$imgurl}w300/{$row['backdrop_image']}' />";
+				echo "<img src='{$imgurl}w300{$row['backdrop_image']}' />";
 			}
 
 			echo "<div class='poster-backer'></div>
@@ -122,7 +132,7 @@ function printCategory($query,$title="",$featured=0) {
 			</div>";
 		}
 		echo "</div><div class='category-title'>{$title}</div>";
-		echo "<div class='move-left movie-nav hidden'></div><div class='move-right movie-nav'></div></div>";
+		echo "<div class='move-left movie-nav hidden' style='left:{$posterNudge}px'></div><div class='move-right movie-nav'></div></div>";
 		return 1;
 	} else {
 		return -1;

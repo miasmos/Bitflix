@@ -152,8 +152,8 @@ body{
 .half {width:49.7%;}
 .whole {width:100%;}
 
-.featured-movie-wrapper,.movie-wrapper {overflow:hidden; width:20000px; left:0px; position:relative;}
-.movie,.featured-movie {
+.featured-movie-wrapper,.movie-wrapper {overflow:hidden; width:20000px; left:0px; position:absolute; z-index:15;}
+.movie,.profile,.featured-movie {
 	background-color:#FFF;
 	width:154px; height:231px;
 	position:relative;
@@ -194,9 +194,9 @@ body{
 .poster-backer {background-color:#FFF; height:100%; width:100%; position:absolute; top:0; z-index:2}
 .poster-placeholder {position:absolute; bottom:15%; z-index:5; font-family:'open_r'; text-align: center; width:134px; margin:0 10px 0 10px; font-size:0.8em;}
 .trailer {width:400px; height:100%; z-index:9; background-color:#000; position:absolute; left:154px;}
-
+.profile>img {position:absolute; left:-15.5px; z-index:16;}
 .movie-nav {height:100%; width:30px; z-index:40; position:absolute; top:0px;}
-.move-left {left:0; float:left;} .move-right {right:0; float:right;}
+.move-left {left:0; float:left;} div.move-left-nudged {left:154px;} .move-right {right:0; float:right;}
 
 /* icons */
  [class^="icon-"]:before, [class*=" icon-"]:before {

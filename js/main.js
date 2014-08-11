@@ -305,6 +305,7 @@ $(document).ready(function() {
 							$('#searchfield,#search-icon').effect("highlight", {color:"#f291af"}, 500);
 						} else {
 							ret = ret.replace(/w154/g,basePosterURL+"w154");
+							ret = ret.replace(/w185/g,basePosterURL+"w185");
 							ret = ret.replace(/w300/g,basePosterURL+"w300");
 							ret = ret.replace("class='category'","class='category' style='height:0px'");
 							$('.category').each(function(index){
@@ -318,6 +319,7 @@ $(document).ready(function() {
 									});
 
 									$('.category').eq(index).addClass('search-'+temp).animate({height:$('.poster').height()},500);
+									$('.category').eq(index).find('.move-left').addClass('.move-left-nudged');
 									$('#searchfield').val('').blur();
 									return false;
 								}
