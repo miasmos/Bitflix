@@ -16,13 +16,18 @@
   \/_____________/\/_________/\_\/       \/_/       \_______\/    \/_________/   \/_/     \_\/  
                                                                                                 
 									I'm lazy. So I made this.
-										 NF + TPB = BF
 -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Bitflix</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="js/youTubeEmbed/youTubeEmbed-jquery-1.0.css">
 <link rel="shortcut icon" href="favicon.ico" />
+<script src="js/pace.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/youTubeEmbed/youTubeEmbed-jquery-1.0.js"></script>
+<script src="js/jquery.swfobject.1-1-1.min.js"></script>
+<script src="js/main.js"></script>
 </head>
 
 <body>
@@ -41,15 +46,8 @@
 </div>
 <div id="content">
 	<?php include 'php/main.php' ?>
+	<?php echo "<script>var basePosterURL = '{$imgurl}';</script>"; ?>
 	<div id='spacer'></div>
 </div>
-
-<?php echo "<script>var basePosterURL = '{$imgurl}';</script>"; ?>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<script src="js/youTubeEmbed/youTubeEmbed-jquery-1.0.js"></script>
-<script src="js/jquery.swfobject.1-1-1.min.js"></script>
-<script src="js/jquery.lazy.min.js"></script>
-<script src="js/main.js"></script>
 </body>
 </html>

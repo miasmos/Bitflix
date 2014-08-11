@@ -23,12 +23,12 @@ function printCategory($query,$title="",$featured=0) {
 			$rating=strval(104*(floatval($row['vote_average'])/10));
 			if ($row['overview'] == null || $row['overview'] == "") {$row['overview'] = "An overview is not available.";}
 			if (!$featured) {
-				echo "<div class='movie'><div class='poster'><span class='poster-placeholder'>{$mtitle}</span>";
+				echo "<div class='movie'><div class='poster'>";
 				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
 				if ($row['poster_image'] != '') {
-					echo "<img class='lazy' data-src='{$imgurl}w154/{$row['poster_image']}' src='images/loading.gif' alt='{$mtitle}'/>";
+					echo "<img class='lazy' src='{$imgurl}w154/{$row['poster_image']}' alt='{$mtitle}'/>";
 				} else {
-					echo "<img class='lazy' data-src='images/default-154.jpg' src='images/loading.gif' alt='{$mtitle}'/>";
+					echo "<img class='lazy' src='images/default-154.jpg' alt='{$mtitle}'/>";
 				}
 				if (!$multipleQualities) {echo "</a>";}
 			}

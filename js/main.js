@@ -18,7 +18,6 @@ $(document).ready(function() {
 	minify everything and worry about page size
 	analytics?
 	fix encoding issues
-	make sure images load last
 	cross-browser
 
 	minor
@@ -33,7 +32,6 @@ $(document).ready(function() {
 	
 	backend
 	force english results?
-	optimize db queries
 	finish search feature
 	add more db query combinations
 	implement randomization
@@ -54,18 +52,15 @@ $(document).ready(function() {
 	var appendPosterNum=3;
 	var titleAnim;
 
-	//load images as they appear in the dom
-	$('img.lazy').lazy({effect:"fadeIn",effectTime:"slow",delay:0,afterLoad: function(element){
-		$(element).closest('.movie').find('.poster-placeholder').fadeOut();
-	},onError: function(element){
-		$(element).attr('src','images/default-154.jpg');
-	}});
-
 	//add tabulated movie descriptions for those that overflow
-	$('.info-overview-tabs').tabs({active:0});
-	$('.info-overview-tabs').each(function(){
+	$('.info-overview-tabs').tabs().each(function(){
 		var newTop = $(this).height();
 		$(this).find('.ui-tabs-nav').css('top',newTop);
+	});
+
+	//once page is done loading, show the content
+	Pace.once('done',function() {
+		$('#content').fadeIn();
 	});
 
 	$(window).resize(function() {
@@ -271,36 +266,43 @@ $(document).ready(function() {
 
 	function doSearch() {
 		if ($('#searchfield').val().length >= 2 && !$('.search-'+$('#searchfield').val()).length) {
-			$.ajax({
-				type: "POST",
-				url: "php/search.php",
-				data: { query: $('#searchfield').val() },
-				cache: false,
-				success: function(ret) {
-					if (ret == -1) {
-						$('#searchfield').val('');
-						$('#searchfield,#search-icon').effect("highlight", {color:"#f291af"}, 500);
-					} else {
-						ret = ret.replace(/w154/g,basePosterURL+"w154");
-						ret = ret.replace(/w300/g,basePosterURL+"w300");
-						ret = ret.replace("class='category'","class='category' style='height:0px'");
-						$('.category').each(function(index){
-							if ($(this).offset().top > $(window).scrollTop()) {
-								$(this).before(ret);
-								$('.category').eq(index).addClass('search-'+$('#searchfield').val()).animate({height:$('.poster').height()},500);
-								$('#searchfield').val('').blur();
-								return false;
-							}
-						});
+			Pace.ignore(function() {
+				$.ajax({
+					type: "POST",
+					url: "php/search.php",
+					data: { query: $('#searchfield').val() },
+					cache: false,
+					success: function(ret) {
+						if (ret == -1) {
+							$('#searchfield').val('');
+							$('#searchfield,#search-icon').effect("highlight", {color:"#f291af"}, 500);
+						} else {
+							ret = ret.replace(/w154/g,basePosterURL+"w154");
+							ret = ret.replace(/w300/g,basePosterURL+"w300");
+							ret = ret.replace("class='category'","class='category' style='height:0px'");
+							$('.category').each(function(index){
+								if ($(this).offset().top > $(window).scrollTop()) {
+									$(this).before(ret);
+
+									//add tabulated movie descriptions for those that overflow
+									$('.category').eq(index).find('.info-overview-tabs').tabs().each(function(){
+										var newTop = $(this).height();
+										$(this).find('.ui-tabs-nav').css('top',newTop);
+									});
+
+									$('.category').eq(index).addClass('search-'+$('#searchfield').val()).animate({height:$('.poster').height()},500);
+									$('#searchfield').val('').blur();
+									return false;
+								}
+							});
+						}
 					}
-				}
+				});
 			});
 		} else {
 			$('#searchfield').val('');
-			$('#searchfield,#search-icon').effect("highlight", {color:"#f291af"}, 500);
+			$('#searchfield').effect("highlight", {color:"#f291af"}, 500);
 		}
-		//$('#content').prepend('<div class="category loading" style="height:0px;"></div>');
-		//$('.loading').animate({height:$('.poster').height()});
 	}
 
 	//do scrolling on long movie titles

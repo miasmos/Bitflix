@@ -97,7 +97,7 @@ body{
 }
 
 #search-icon {
-	background:#FFF;
+	background-color:transparent;
 	font-size:2em;
 	color:#7e7e7e;
 	padding-left:18px;
@@ -118,7 +118,7 @@ body{
 }
 
 /* body */
-#content {width:100%;}
+#content {width:100%; display:none;}
 #spacer {width:0px; height:180px;}
 
 .category {
@@ -220,3 +220,23 @@ body{
 .icon-youtube-play:before { content: '\e806'; } /* '' */
 .icon-cancel-1:before { content: '\e807'; } /* '' */
 .icon-ok-1:before { content: '\e808'; } /* '' */
+
+/* progress bar */
+
+.pace .pace-progress {
+  background: #FFF;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  height: 4px;
+
+  -webkit-transition: width 1s;
+  -moz-transition: width 1s;
+  -o-transition: width 1s;
+  transition: width 1s;
+}
+
+.pace-inactive {
+  display: none;
+}
