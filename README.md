@@ -3,4 +3,4 @@ Bitflix
 
 A reimagining of Netflix's interface.
 
-src(./example.jpg)
+![Cover image](./example.jpg)
