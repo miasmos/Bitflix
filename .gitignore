@@ -1,3 +1,4 @@
 *.psd
 *.ai
 *.torrent
+dbConnect.php
