@@ -9,7 +9,7 @@ $q = preg_replace("/[^A-Za-z0-9]/", " ", $_POST['query']);
 $q = $db->real_escape_string($q);
 
 if (strlen($q) >= 0 && trim($q) !== '') {
-	$ret = @printActors("SELECT * FROM `actor` INNER JOIN `movie_actor` on actor.id=movie_actor.actorid WHERE movieid = {$q} LIMIT 2");
+	$ret = @printActors("SELECT * FROM `actor` INNER JOIN `movie_actor` on actor.id=movie_actor.actorid WHERE movieid = ".$q." LIMIT 2");
 	if ($ret == -1) {echo $ret;}
 }
 else {

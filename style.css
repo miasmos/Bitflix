@@ -146,6 +146,7 @@ body{
 .quality-top-only {height:100% !important; border-bottom: none !important;}
 .quality-bottom {height:28%; float:left; border-left: solid 1px #DDD;}
 .quality-bottom:first-child {border-left: none !important;}
+.quality-top:hover,.quality-bottom:hover,.quality-top-only:hover {background-color:#DDD;}
 .quality p {text-align:center; top:50%; transform:translateY(-95%); position:relative;}
 .quality a {width:inherit; height: inherit; position:absolute;}
 .third {width:32.7%;}

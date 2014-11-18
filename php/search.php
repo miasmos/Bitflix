@@ -20,7 +20,7 @@ if (strlen($q) >= 2 && trim($q) !== '') {
 	//movie.year DONE
 	//$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` on torrent.movieid=movie.id WHERE torrent.confirmed = 1 AND torrent.rank = 1 AND movie.title LIKE '%".$q."%' OR movie.year LIKE '%".$q."%' GROUP BY movie.id LIMIT 50",$q);
 	//types: 0 movie search, 1 actor search
-	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` ON torrent.movieid = movie.id INNER JOIN `movie_actor` ON movie.id = movie_actor.movieid INNER JOIN `actor` ON actor.id = movie_actor.actorid WHERE actor.name = '{$q}' LIMIT 50",$q);
+	$ret = printCategory("SELECT * FROM `torrent` INNER JOIN `movie` ON torrent.movieid = movie.id INNER JOIN `movie_actor` ON movie.id = movie_actor.movieid INNER JOIN `actor` ON actor.id = movie_actor.actorid WHERE actor.name = '".$q."' LIMIT 50",$q);
 	if ($ret == -1) {echo $ret;}
 }
 else {

@@ -5,8 +5,11 @@ function printCategory($query,$title="",$featured=0) {
 
 	$select = $db->query($query);
 	if (mysqli_num_rows($select) > 0) {
-		$select = mysqli_fetch_all($select,MYSQLI_ASSOC);
-		$select = collapseQualities($select);
+		$temp = array();
+		while ($row = $select->fetch_assoc()) {
+			$temp[] = $row;
+		}
+		$select = collapseQualities($temp);
 
 		echo "<div class='category'>";
 
@@ -34,7 +37,8 @@ function printCategory($query,$title="",$featured=0) {
 			if ($row['overview'] == null || $row['overview'] == "") {$row['overview'] = "An overview is not available.";}
 			if (!$featured) {
 				echo "<div class='movie' id='{$row['movieid']}'><div class='poster'>";
-				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
+				//if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
+				if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:howdotheywork'>";}
 				if ($row['poster_image'] != '') {
 					echo "<img class='lazy' src='{$imgurl}w154{$row['poster_image']}' alt='{$mtitle}'/>";
 				} else {
@@ -53,8 +57,18 @@ function printCategory($query,$title="",$featured=0) {
 
 			$singleQuality = $multipleQualities ? '' : 'quality-top-only';
 			if ($multipleQualities) {
+				// echo "<div class='quality'>
+				// 		<div class='quality-top {$singleQuality} whole'><a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>
+				// 			<p>
+				// 				{$row['quality']}
+				// 			</p>
+				// 			<p>
+				// 				{$row['size']}
+				// 			</p>
+				// 		</a></div>";
+
 				echo "<div class='quality'>
-						<div class='quality-top {$singleQuality} whole'><a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>
+						<div class='quality-top {$singleQuality} whole'><a href='magnet:?xt=urn:btih:howdotheywork'>
 							<p>
 								{$row['quality']}
 							</p>
@@ -77,7 +91,16 @@ function printCategory($query,$title="",$featured=0) {
 				
 				for($j=0; $j<count($row['other_qualities']); $j++) {
 					$other_qualities = $row['other_qualities'][$j];
-					echo "<div class='quality-bottom {$bottomWidthClass}'><a href='magnet:?xt=urn:btih:{$select[$other_qualities]['magnet']}{$select[$other_qualities]['magnetend']}'>
+					// echo "<div class='quality-bottom {$bottomWidthClass}'><a href='magnet:?xt=urn:btih:{$select[$other_qualities]['magnet']}{$select[$other_qualities]['magnetend']}'>
+					// 		<p>
+					// 			{$select[$other_qualities]['quality']}
+					// 		</p>
+					// 		<p>
+					// 			{$select[$other_qualities]['size']}
+					// 		</p>
+					// 	</a></div>";
+
+					echo "<div class='quality-bottom {$bottomWidthClass}'><a href='magnet:?xt=urn:btih:howdotheywork'>
 							<p>
 								{$select[$other_qualities]['quality']}
 							</p>
@@ -122,7 +145,8 @@ function printCategory($query,$title="",$featured=0) {
 						</div>
 						<ul class='info-menu'>";
 
-					  if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
+					  // if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:{$row['magnet']}{$row['magnetend']}'>";}
+						 if (!$multipleQualities) {echo "<a href='magnet:?xt=urn:btih:howdotheywork'>";}
 						echo "<li class='info-menu-icon icon-down-bold'></li>";
 					  if (!$multipleQualities) {echo "</a>";}
 					  if (!empty($row['trailer']) && $row['trailer'] != null) {echo "<li class='info-menu-icon icon-youtube-play' data-href='{$row['trailer']}'></li>";}
@@ -144,7 +168,11 @@ function printActors($query) {
 
 	$select = $db->query($query);
 	if (mysqli_num_rows($select) > 0) {
-		$select = mysqli_fetch_all($select,MYSQLI_ASSOC);
+		$temp = array();
+		while ($row = $select->fetch_assoc()) {
+			$temp[] = $row;
+		}
+		$select = collapseQualities($temp);
 
 		for($i=0;$i<count($select);$i++) {
 			$row = $select[$i];
@@ -157,16 +185,16 @@ function printActors($query) {
 }
 
 function collapseQualities($select) {
-	$temp = [];
+	$temp = array();
 	for($i=1;$i<count($select);$i++) {
 		$curRow = $select[$i];
 		$prevRow = $select[$i-1];
 		if ($curRow['movieid'] == $prevRow['movieid']) {
 			array_push($temp,$i);
 		} else {
-			if ($temp != []) {
+			if ($temp != array()) {
 				$select[$i-count($temp)-1]['other_qualities'] = $temp;
-				$temp = [];
+				$temp = array();
 			}
 		}
 		$select[$i-1]['quality'] = beautifyQuality($prevRow['quality']);
@@ -176,9 +204,9 @@ function collapseQualities($select) {
 	$select[count($select)-1]['quality'] = beautifyQuality($select[count($select)-1]['quality']);
 	$select[count($select)-1]['size'] = beautifySize($select[count($select)-1]['size']);
 	
-	if ($temp != []) {
+	if ($temp != array()) {
 		$select[count($select)-count($temp)-1]['other_qualities'] = $temp;
-		$temp = [];
+		$temp = array();
 	}
 	//print_r($select);
 	return $select;
@@ -211,7 +239,7 @@ function beautifySize($size) {
 }
 
 function splitStringToArray($str,$charsPerIndex) {
-	$ret = [];
+	$ret = array();
 	while(strlen($str) > $charsPerIndex) {
 		array_push($ret,substr($str,0,$charsPerIndex-1).'...');
 		$str = substr($str,$charsPerIndex);

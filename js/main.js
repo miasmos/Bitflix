@@ -130,7 +130,7 @@ $(document).ready(function() {
 	//animate info reveals on cover hover
 	$('#content').on("mouseenter", '.movie', function(event) {
 		//get actors in movie
-		if (!$('this').find('info-actors').hasClass('f')) {
+		if (!$(this).find('.info-actors').hasClass('f')) {
 			$.ajax({
 				type: "POST",
 				context: this,
@@ -202,7 +202,12 @@ $(document).ready(function() {
 
 	//close quality on quality click
 	$('#content').on("click",'.quality', function(){
-		$(this).find('.quality').animate({left:posterWidth+$('.info').width()+30},0);
+		$(this).animate({left:posterWidth+$('.info').width()+30},200);
+	});
+
+	//close quality on quality mouseleave
+	$('#content').on("mouseleave", '.quality', function() {
+		$(this).animate({left:posterWidth+$('.info').width()+30},200);
 	});
 
 	//search for an actor on click
