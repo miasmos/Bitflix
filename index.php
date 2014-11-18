@@ -15,7 +15,6 @@
   / / /__________\/\__\/_/___\/_/ /      / / /      /_______/\__\//\__\/_/___\   / / /    /_/ / 
   \/_____________/\/_________/\_\/       \/_/       \_______\/    \/_________/   \/_/     \_\/  
                                                                                                 
-									I'm lazy. So I made this.
 -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Bitflix</title>
