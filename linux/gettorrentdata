@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/usr/local/bin/php -q /var/www/php/GetTorrentData.php
